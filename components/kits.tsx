@@ -16,41 +16,54 @@ export function Kits() {
 			<p className="eyebrow">MUNICH HOTEL DELIVERY</p>
 			<h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">Ready-made kits</h2>
 			<p className="mt-3 text-sm text-black/65">Choose a curated kit — delivered directly to your hotel.</p>
-			<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+			<div className="mt-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
 				{(['essential-kit', 'power-kit', 'full-day-kit'] as const).map((kitId) => {
 					const kit = kits[kitId];
 					return (
-						<article key={kit.id} className={`card overflow-hidden p-4 ${kit.id === 'full-day-kit' ? 'ring-2 ring-[#184f3a]' : ''}`}>
-							<div className="flex flex-col sm:flex-row gap-4 items-center">
-								<div className="w-full sm:w-44 flex-shrink-0">
-									<ProductImage src={`/products/${kit.id}.png`} name={kit.name} className="h-36 w-full rounded-2xl bg-[#f7fafcff] p-4" />
-								</div>
-								<div className="flex-1">
-									<div className="flex items-start justify-between gap-3">
-										<div>
-											<h3 className="text-lg font-bold">{kit.name}</h3>
-											<p className="mt-1 text-sm text-black/60">{kit.description}</p>
-										</div>
-										<div className="text-right">
-											<div className="text-sm font-semibold">{formatPrice(kit.price)}</div>
-											{kit.id === 'full-day-kit' ? <div className="mt-1 rounded-full bg-[#184f3a] px-2 py-1 text-xs font-bold text-white">BEST VALUE</div> : kit.popular ? <div className="mt-1 rounded-full bg-[#184f3a] px-2 py-1 text-xs font-bold text-white">Most Popular</div> : null}
-										</div>
+						<article
+							key={kit.id}
+							className={`flex flex-col rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden p-4 ${kit.id === 'full-day-kit' ? 'ring-2 ring-[#184f3a]' : ''}`}>
+							{/* Card height set on md+ so columns match height */}
+							<div className="w-full md:h-[28rem] flex flex-col">
+								{/* Image area ~60% of card height on md+ */}
+								<div className="flex items-center justify-center md:h-[60%] h-auto">
+									<div className="w-3/4 md:w-3/4">
+										<ProductImage src={`/products/${kit.id}.png`} name={kit.name} className="w-full h-full bg-transparent p-2" />
 									</div>
-									<ul className="mt-3 text-sm text-black/60">
-										{kit.productIds.map((id) => <li key={id}>✓ {products[id].name}</li>)}
-									</ul>
-									{kit.cableChoice && (
-										<div className="mt-3 flex gap-2">
-											{(['usb-c-cable', 'lightning-cable'] as const).map((type) => (
-												<button key={type} onClick={() => setCables({ ...cables, [kit.id]: type })} className={`rounded-full px-3 py-1 text-sm font-semibold ${cables[kit.id] === type ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>
-													{type === 'usb-c-cable' ? 'USB-C' : 'Lightning'}
-												</button>
-											))}
-										</div>
-									)}
+								</div>
+								{/* Content area */}
+								<div className="flex-1 flex flex-col justify-between pt-4">
+									<div>
+										<h3 className="text-xl font-semibold">{kit.name}</h3>
+										<p className="mt-1 text-sm text-black/65">{kit.description}</p>
+										{/* optional small line */}
+										{kit.id === 'essential-kit' ? (
+											<p className="mt-2 text-sm text-black/55">5 essentials included</p>
+										) : kit.id === 'full-day-kit' ? (
+											<p className="mt-2 text-sm text-black/55">Everything for a full festival day</p>
+										) : null}
+									</div>
 									<div className="mt-4">
-										<button
-											onClick={() => {
+										<div className="flex items-center justify-between gap-4">
+											<div className="text-lg font-semibold">{formatPrice(kit.price)}</div>
+											{kit.id === 'full-day-kit' ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">BEST VALUE</div> : kit.popular ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">MOST POPULAR</div> : null}
+										</div>
+										{/* Cable selector for kits that need it */}
+										{kit.cableChoice && (
+											<div className="mt-3 flex items-center justify-center gap-3">
+												{(['usb-c-cable', 'lightning-cable'] as const).map((type) => (
+													<button
+														key={type}
+														onClick={() => setCables({ ...cables, [kit.id]: type })}
+														className={`rounded-full px-4 py-2 text-sm font-semibold ${cables[kit.id] === type ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>
+														{type === 'usb-c-cable' ? 'USB-C' : 'Lightning'}
+													</button>
+												))}
+											</div>
+										)}
+										<div className="mt-4">
+											<button
+												onClick={() => {
 												addKit(kit.id as KitId, cables[kit.id]);
 												showToast(`${kit.name} added ✓`);
 												setCartOpen(true);
@@ -60,7 +73,7 @@ export function Kits() {
 												}
 											}}
 											className={`button-primary w-full transform transition duration-200 ${added[kit.id] ? 'scale-95' : ''}`}
-										>
+											>
 											{added[kit.id] ? (
 												<span className="inline-flex items-center gap-2">
 													<svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6.5L5.2 10.7L15 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -69,7 +82,8 @@ export function Kits() {
 											) : (
 												'Choose Kit'
 											)}
-										</button>
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
