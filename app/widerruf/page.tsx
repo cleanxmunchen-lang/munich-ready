@@ -1,0 +1,1 @@
+import { LegalPage } from '@/components/legal-page'; export default function Page() { return <LegalPage title="Cancellation Policy"><h2>Right of withdrawal</h2><p>[INSERT REVIEWED CANCELLATION TERMS AND MODEL FORM]. Consumable, sealed, and urgent delivery products may have specific treatment under applicable law. Obtain legal review before publishing.</p></LegalPage>; }

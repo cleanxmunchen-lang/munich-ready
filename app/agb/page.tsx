@@ -1,0 +1,1 @@
+import { LegalPage } from '@/components/legal-page'; export default function Page() { return <LegalPage title="Terms / AGB"><h2>Terms and conditions</h2><p>[INSERT REVIEWED TERMS AND CONDITIONS]. These terms must identify the contracting party, scope of services, pricing, payment, delivery, liability, and dispute-resolution information as applicable.</p></LegalPage>; }

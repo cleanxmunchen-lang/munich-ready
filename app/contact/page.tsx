@@ -1,0 +1,1 @@
+import { LegalPage } from '@/components/legal-page'; import { site } from '@/data/site'; export default function Page() { return <LegalPage title="Contact"><h2>Get in touch</h2><p>Email: {site.contactEmail}<br/>Phone / WhatsApp: {site.phone}</p><p>Replace these placeholders with active, monitored contact details before launch.</p></LegalPage>; }

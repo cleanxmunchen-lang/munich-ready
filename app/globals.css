@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --ink: #17201a; --sand: #f6f5ef; --moss: #184f3a; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--sand); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+button, input, textarea, select { font: inherit; }
+.shell { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+.button { @apply inline-flex min-h-12 items-center justify-center rounded-full px-5 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2; }
+.button-primary { @apply button bg-[#184f3a] text-white hover:bg-[#103b2b] focus:ring-[#184f3a]; }
+.button-secondary { @apply button border border-[#17201a]/15 bg-white hover:bg-[#f4f2ea] focus:ring-[#184f3a]; }
+.card { @apply rounded-3xl border border-[#17201a]/10 bg-white shadow-sm; }
+.eyebrow { @apply text-xs font-bold uppercase tracking-[.16em] text-[#184f3a]; }

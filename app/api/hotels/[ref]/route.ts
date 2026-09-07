@@ -1,0 +1,2 @@
+import { NextResponse } from 'next/server'; import { getHotelByRef } from '@/lib/hotels';
+export async function GET(_: Request, { params }: { params: Promise<{ ref: string }> }) { const hotel = await getHotelByRef((await params).ref); if (!hotel) return NextResponse.json({ error: 'Hotel not found' }, { status: 404 }); return NextResponse.json({ name: hotel.name, refCode: hotel.ref_code, active: hotel.active }); }

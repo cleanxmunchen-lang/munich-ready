@@ -1,0 +1,7 @@
+import { deliveryOptions, kits, products, type KitId, type ProductId } from '@/data/catalog';
+export type CheckoutItem = { kind: 'kit'; id: KitId; cableType?: 'usb-c-cable' | 'lightning-cable'; quantity: number } | { kind: 'product'; id: ProductId; quantity: number };
+export function calculateOrder(items: CheckoutItem[], deliveryType: string) {
+  if (!Array.isArray(items) || !items.length || items.length > 10) throw new Error('Your cart is empty or invalid.');
+  let kitSeen = false; const normalized = items.map((item) => { const quantity = Math.max(1, Math.min(10, Math.floor(item.quantity || 1))); if (item.kind === 'kit') { if (kitSeen || !kits[item.id]) throw new Error('Only one ready-made kit can be selected.'); kitSeen = true; const kit = kits[item.id]; if (kit.cableChoice && item.cableType !== 'usb-c-cable' && item.cableType !== 'lightning-cable') throw new Error('Choose a cable type.'); return { ...item, quantity, name: kit.name, unitAmount: kit.price }; } if (item.kind !== 'product' || !products[item.id]) throw new Error('Invalid product.'); return { ...item, quantity, name: products[item.id].name, unitAmount: products[item.id].price }; });
+  const delivery = deliveryOptions.find((option) => option.id === deliveryType); if (!delivery) throw new Error('Choose a delivery option.'); const subtotal = normalized.reduce((sum, item) => sum + item.unitAmount * item.quantity, 0); return { items: normalized, subtotal, delivery, total: subtotal + delivery.price };
+}

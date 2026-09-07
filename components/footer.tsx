@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export function Footer() { return <footer className="border-t border-black/10 py-10"><div className="shell flex flex-col justify-between gap-5 text-sm text-black/60 sm:flex-row"><p>© {new Date().getFullYear()} Munich Ready</p><nav className="flex flex-wrap gap-x-4 gap-y-2">{[['Impressum','/impressum'],['Datenschutz','/datenschutz'],['Widerruf','/widerruf'],['Shipping & Delivery','/versand'],['Terms / AGB','/agb'],['Contact','/contact']].map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}</nav></div></footer>; }
