@@ -9,6 +9,7 @@ type CartContextType = {
 	refCode: string | null;
 	setRefCode: (ref: string | null) => void;
 	addKit: (id: KitId, cableType?: 'usb-c-cable' | 'lightning-cable') => void;
+	addProduct: (id: ProductId) => void;
 	setCustom: (ids: ProductId[]) => void;
 	remove: (index: number) => void;
 	setDeliveryType: (id: string) => void;
@@ -71,6 +72,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 			setRefCode,
 			addKit: (id: KitId, cableType?: 'usb-c-cable' | 'lightning-cable') => setItems((previous) => [...previous.filter((item) => item.kind !== 'kit'), { kind: 'kit', id, cableType, quantity: 1 }]),
 			setCustom: (ids: ProductId[]) => setItems((previous) => [...previous.filter((item) => item.kind === 'kit'), ...ids.map((id) => ({ kind: 'product' as const, id, quantity: 1 }))]),
+			addProduct: (id: ProductId) => setItems((previous) => {
+				const found = previous.findIndex((it) => it.kind === 'product' && it.id === id);
+				if (found >= 0) return previous.map((it, i) => i === found ? { ...it, quantity: it.quantity + 1 } : it);
+				return [...previous, { kind: 'product' as const, id, quantity: 1 }];
+			}),
 			remove: (index: number) => setItems((previous) => previous.filter((_, itemIndex) => itemIndex !== index)),
 			setDeliveryType,
 			subtotal,

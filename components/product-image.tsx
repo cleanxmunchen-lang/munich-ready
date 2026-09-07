@@ -8,7 +8,7 @@ export function ProductImage({ src, name, className = '' }: { src?: string; name
   if (!src || failed) return <ProductArt name={name} className={className} />;
   return (
     <div className={`relative overflow-hidden rounded-2xl bg-white ${className}`}>
-      <Image src={src} alt={name} fill sizes="(max-width: 640px) 100vw, 320px" onError={() => setFailed(true)} style={{ objectFit: 'cover' }} />
+      <Image src={src} alt={name} fill sizes="(max-width: 640px) 100vw, 320px" onError={() => setFailed(true)} style={{ objectFit: 'contain' }} />
     </div>
   );
 }

@@ -6,10 +6,12 @@ import { ProductImage } from '@/components/product-image';
 import { useCart } from '@/components/cart-provider';
 
 export function Builder() {
-	const { setCustom, showToast, setCartOpen } = useCart();
-	const [selected, setSelected] = useState<ProductId[]>([]);
-	const total = selected.reduce((sum, id) => sum + products[id].price, 0);
-	const toggle = (id: ProductId) => setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
+	const { items, addProduct, setQuantity, subtotal, total, setCartOpen, showToast } = useCart();
+	const [added, setAdded] = useState<Record<string, boolean>>({});
+	const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	const findIndex = (id: ProductId) => items.findIndex((it) => it.kind === 'product' && it.id === id);
+
 	return (
 		<section id="build" className="bg-[#f7faf6] py-12 sm:py-20">
 			<div className="shell">
@@ -17,33 +19,87 @@ export function Builder() {
 				<div className="mt-2 flex flex-col justify-between gap-4 sm:flex-row">
 					<h2 className="text-3xl font-bold tracking-tight sm:text-5xl">Build Your Kit</h2>
 					<div className="rounded-2xl bg-white px-5 py-3 text-right">
-						<span className="block text-xs uppercase tracking-wider">Your kit · {selected.length} items</span>
-						<strong className="text-xl">{formatPrice(total)}</strong>
+						<span className="block text-xs uppercase tracking-wider">Your kit · {items.filter(i => i.kind === 'product').reduce((s, it) => s + it.quantity, 0)} items</span>
+						<strong className="text-xl">{formatPrice(subtotal)}</strong>
 					</div>
 				</div>
 
-				<div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-					{Object.values(products).map((product) => (
-						<button onClick={() => toggle(product.id)} key={product.id} className={`flex flex-col overflow-hidden rounded-2xl border bg-white text-left transition ${selected.includes(product.id) ? 'border-[#184f3a] ring-2 ring-[#184f3a]' : 'border-black/10'}`}>
-							<div className="h-28 w-full">
-								<ProductImage src={product.image} name={product.name} className="h-28 w-full" />
-							</div>
-							<div className="p-3">
-								<div className="flex items-center justify-between">
-									<div className="text-sm font-bold">{product.name}</div>
-									<div className="text-sm text-black/60">{formatPrice(product.price)}</div>
+				<div className="mt-6 lg:flex lg:gap-6">
+					<div className="grid flex-1 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3">
+						{Object.values(products).map((product) => {
+							const idx = findIndex(product.id as ProductId);
+							const inCart = idx >= 0 ? items[idx].quantity : 0;
+							return (
+								<div key={product.id} className={`flex flex-col overflow-hidden rounded-2xl border bg-white text-left transition border-black/10`}>
+									<div className="h-36 w-full p-4">
+										<ProductImage src={product.image} name={product.name} className="h-full w-full" />
+									</div>
+									<div className="p-3 flex items-center justify-between">
+										<div>
+											<div className="text-sm font-bold">{product.name}</div>
+											<div className="mt-1 text-xs text-black/60">{formatPrice(product.price)}</div>
+										</div>
+										<div>
+											{inCart ? (
+												<div className="flex items-center gap-2">
+													<button className="px-3 py-1 rounded border" onClick={() => setQuantity(idx, inCart - 1)} aria-label={`Decrease ${product.name}`}>-</button>
+													<div className="px-3">{inCart}</div>
+													<button className="px-3 py-1 rounded border" onClick={() => setQuantity(idx, inCart + 1)} aria-label={`Increase ${product.name}`}>+</button>
+												</div>
+											) : (
+												<button
+													className={`button-primary transform transition duration-200 ${added[product.id] ? 'scale-95' : ''}`}
+													onClick={() => {
+														addProduct(product.id as ProductId);
+														showToast(`${product.name} added`);
+														setCartOpen(true);
+														if (!prefersReducedMotion) {
+															setAdded((s) => ({ ...s, [product.id]: true }));
+															window.setTimeout(() => setAdded((s) => ({ ...s, [product.id]: false })), 1200);
+														}
+													}}
+												>
+													{added[product.id] ? (
+														<span className="inline-flex items-center gap-2">
+															<svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6.5L5.2 10.7L15 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+															Added
+														</span>
+													) : (
+														'Add'
+													)}
+												</button>
+											)}
+										</div>
+									</div>
 								</div>
-								<div className="mt-2 text-xs text-black/60">{product.description}</div>
-							</div>
-						</button>
-					))}
-				</div>
+							);
+						})}
+					</div>
 
-				<div className="sticky bottom-3 z-30 mt-6 rounded-2xl border border-black/10 bg-white p-3 shadow-lg backdrop-blur sm:flex sm:items-center sm:justify-between">
-					<p className="text-sm">{selected.length ? `${selected.length} items selected` : 'Select essentials to continue.'}</p>
-										<Link href="/checkout" onClick={() => { setCustom(selected); showToast('Custom kit added ✓'); setCartOpen(true); }} className={`button-primary mt-2 w-full sm:mt-0 sm:w-auto ${selected.length ? '' : 'pointer-events-none opacity-50'}`}>
-						{selected.length ? `Continue · ${formatPrice(total)}` : 'Continue'}
-					</Link>
+					<aside className="hidden w-80 shrink-0 lg:block">
+						<div className="sticky top-24 rounded-2xl border border-black/10 bg-white p-5">
+							<h3 className="text-lg font-bold">Your Kit</h3>
+							<div className="mt-4 space-y-3 text-sm">
+								{items.filter(i => i.kind === 'product').length === 0 && <p className="text-black/60">No items yet.</p>}
+								{items.filter(i => i.kind === 'product').map((item, index) => (
+									<div key={`${item.id}-${index}`} className="flex items-center justify-between">
+										<div>
+											<div className="font-semibold">{products[item.id].name}</div>
+											<div className="text-xs text-black/60">{formatPrice(products[item.id].price)} each</div>
+										</div>
+										<div className="text-right">
+											<div className="font-semibold">{formatPrice(products[item.id].price * item.quantity)}</div>
+											<div className="text-xs text-black/60">{item.quantity} × {formatPrice(products[item.id].price)}</div>
+										</div>
+									</div>
+								))}
+							</div>
+							<div className="mt-5 border-t border-black/10 pt-4">
+								<div className="flex justify-between"><span>Subtotal</span><strong>{formatPrice(subtotal)}</strong></div>
+								<Link href="/checkout" className="button-primary mt-4 w-full">Continue to Checkout</Link>
+							</div>
+						</div>
+					</aside>
 				</div>
 			</div>
 		</section>
