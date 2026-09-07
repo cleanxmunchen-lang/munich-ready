@@ -1,3 +1,56 @@
 'use client';
-import { useState } from 'react'; import Link from 'next/link'; import { kits, products, type KitId } from '@/data/catalog'; import { ProductArt } from '@/components/product-art'; import { useCart } from '@/components/cart-provider';
-export function Kits() { const { addKit } = useCart(); const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({}); return <section id="kits" className="shell py-14 sm:py-20"><p className="eyebrow">Ready-made kits</p><h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">Packed for a good day out.</h2><div className="mt-8 grid gap-5 lg:grid-cols-3">{Object.values(kits).map((kit) => <article key={kit.id} className="card relative overflow-hidden p-4"><ProductArt name={kit.name} className="h-48" />{kit.popular && <span className="absolute right-7 top-7 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">Most Popular</span>}<div className="p-2 pt-5"><div className="flex justify-between gap-3"><h3 className="text-xl font-bold">{kit.name}</h3><strong>{new Intl.NumberFormat('en-DE',{style:'currency',currency:'EUR'}).format(kit.price / 100)}</strong></div><p className="mt-2 text-sm text-black/60">{kit.description}</p><ul className="mt-4 space-y-1 text-sm">{kit.productIds.map((id) => <li key={id}>✓ {products[id].name}{id === 'usb-c-cable' && kit.cableChoice ? ' (your choice)' : ''}</li>)}</ul>{kit.cableChoice && <div className="mt-5 grid grid-cols-2 gap-2">{(['usb-c-cable', 'lightning-cable'] as const).map((type) => <button key={type} onClick={() => setCables({ ...cables, [kit.id]: type })} className={`rounded-xl border p-3 text-sm font-semibold ${cables[kit.id] === type ? 'border-[#184f3a] bg-[#e7f0e7]' : 'border-black/10'}`}>{type === 'usb-c-cable' ? 'USB-C' : 'Lightning'}</button>)}</div>}<Link href="/checkout" onClick={() => addKit(kit.id as KitId, cables[kit.id])} className="button-primary mt-5 w-full">Add {kit.name}</Link></div></article>)}</div></section>; }
+import { useState } from 'react';
+import Link from 'next/link';
+import { kits, products, type KitId, formatPrice } from '@/data/catalog';
+import { ProductImage } from '@/components/product-image';
+import { useCart } from '@/components/cart-provider';
+
+export function Kits() {
+	const { addKit, showToast, setCartOpen } = useCart();
+	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({});
+	return (
+		<section id="kits" className="shell py-12 sm:py-20">
+			<p className="eyebrow">MUNICH HOTEL DELIVERY</p>
+			<h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">Ready-made kits</h2>
+			<p className="mt-3 text-sm text-black/65">Select a curated kit and we deliver directly to your hotel.</p>
+			<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+				{Object.values(kits).map((kit) => (
+					<article key={kit.id} className="card overflow-hidden p-4">
+						<div className="flex gap-4">
+							<div className="w-36 flex-shrink-0">
+								<ProductImage src={`/kits/${kit.id}.jpg`} name={kit.name} className="h-28 w-full rounded-2xl" />
+							</div>
+							<div className="flex flex-1 flex-col">
+								<div className="flex items-start justify-between gap-3">
+									<div>
+										<h3 className="text-lg font-bold">{kit.name}</h3>
+										<p className="mt-1 text-sm text-black/60">{kit.description}</p>
+									</div>
+									<div className="text-right">
+										<div className="text-sm font-semibold">{formatPrice(kit.price)}</div>
+										{kit.popular ? <div className="mt-1 rounded-full bg-[#184f3a] px-2 py-1 text-xs font-bold text-white">Most Popular</div> : null}
+									</div>
+								</div>
+								<ul className="mt-3 flex-1 text-sm text-black/60">
+									{kit.productIds.map((id) => <li key={id}>✓ {products[id].name}</li>)}
+								</ul>
+								{kit.cableChoice && (
+									<div className="mt-3 flex gap-2">
+										{(['usb-c-cable', 'lightning-cable'] as const).map((type) => (
+											<button key={type} onClick={() => setCables({ ...cables, [kit.id]: type })} className={`rounded-full px-3 py-1 text-sm font-semibold ${cables[kit.id] === type ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>
+												{type === 'usb-c-cable' ? 'USB-C' : 'Lightning'}
+											</button>
+										))}
+									</div>
+								)}
+								<div className="mt-4">
+									<button onClick={() => { addKit(kit.id as KitId, cables[kit.id]); showToast(`${kit.name} added ✓`); setCartOpen(true); }} className="button-primary w-full">Add {kit.name}</button>
+								</div>
+							</div>
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
+	);
+}
