@@ -6,9 +6,8 @@ import { ProductImage } from '@/components/product-image';
 import { useCart } from '@/components/cart-provider';
 
 export function Builder() {
-	const { items, addProduct, setQuantity, subtotal, total, setCartOpen, showToast } = useCart();
+	const { items, addProduct, setQuantity, subtotal, showToast } = useCart();
 	const [added, setAdded] = useState<Record<string, boolean>>({});
-	const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	const findIndex = (id: ProductId) => items.findIndex((it) => it.kind === 'product' && it.id === id);
 
@@ -34,39 +33,30 @@ export function Builder() {
 									<div className="h-36 w-full p-4">
 										<ProductImage src={product.image} name={product.name} className="h-full w-full" />
 									</div>
-									<div className="p-3 flex items-center justify-between">
+									<div className="p-3 flex flex-wrap items-center justify-between gap-2">
 										<div>
 											<div className="text-sm font-bold">{product.name}</div>
 											<div className="mt-1 text-xs text-black/60">{formatPrice(product.price)}</div>
 										</div>
 										<div>
-											{inCart ? (
+											{inCart && !added[product.id] ? (
 												<div className="flex items-center gap-2">
 													<button className="px-3 py-1 rounded border" onClick={() => setQuantity(idx, inCart - 1)} aria-label={`Decrease ${product.name}`}>-</button>
 													<div className="px-3">{inCart}</div>
-													<button className="px-3 py-1 rounded border" onClick={() => setQuantity(idx, inCart + 1)} aria-label={`Increase ${product.name}`}>+</button>
+													<button className="px-3 py-1 rounded border" onClick={() => { setQuantity(idx, inCart + 1); showToast(`${product.name} added to cart. Quantity: ${inCart + 1}`); }} aria-label={`Increase ${product.name}`}>+</button>
 												</div>
 											) : (
 												<button
-													className={`button-primary transform transition duration-200 ${added[product.id] ? 'scale-95' : ''}`}
+													disabled={added[product.id]}
+													className={`button-primary whitespace-nowrap transform transition duration-200 motion-reduce:transform-none motion-reduce:transition-none ${added[product.id] ? 'scale-95' : ''}`}
 													onClick={() => {
 														addProduct(product.id as ProductId);
-														showToast(`${product.name} added`);
-														setCartOpen(true);
-														if (!prefersReducedMotion) {
-															setAdded((s) => ({ ...s, [product.id]: true }));
-															window.setTimeout(() => setAdded((s) => ({ ...s, [product.id]: false })), 1200);
-														}
+														showToast(`${product.name} added to cart`);
+														setAdded((s) => ({ ...s, [product.id]: true }));
+														window.setTimeout(() => setAdded((s) => ({ ...s, [product.id]: false })), 1400);
 													}}
 												>
-													{added[product.id] ? (
-														<span className="inline-flex items-center gap-2">
-															<svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6.5L5.2 10.7L15 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-															Added
-														</span>
-													) : (
-														'Add'
-													)}
+													{added[product.id] ? 'Added ✓' : 'Add'}
 												</button>
 											)}
 										</div>

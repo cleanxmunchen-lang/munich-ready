@@ -5,6 +5,7 @@ import { formatPrice } from '@/data/catalog';
 
 export function Header() {
 	const { items, total, setCartOpen } = useCart();
+	const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 	return (
 		<header className="sticky top-0 z-30 bg-[var(--sand)]/95 backdrop-blur-sm">
 			<div className="shell flex h-16 items-center justify-between">
@@ -18,14 +19,14 @@ export function Header() {
 					</nav>
 				</div>
 				<div className="flex items-center gap-3">
-					<button onClick={() => setCartOpen(true)} className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
+					<button aria-label={`View cart (${itemCount} ${itemCount === 1 ? 'item' : 'items'})`} onClick={() => setCartOpen(true)} className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
 						<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
 							<path d="M3 3h2l.4 2M7 13h10l3-8H6.4" stroke="#17201a" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
 							<circle cx="10" cy="20" r="1" fill="#17201a" />
 							<circle cx="18" cy="20" r="1" fill="#17201a" />
 						</svg>
 						<span className="hidden sm:inline">Cart</span>
-						{items.length ? <span className="ml-2 font-bold">{items.length} · {formatPrice(total)}</span> : null}
+						{itemCount ? <span className="ml-2 font-bold">{itemCount} · {formatPrice(total)}</span> : null}
 					</button>
 				</div>
 			</div>

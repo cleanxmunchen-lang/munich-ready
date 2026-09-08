@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { deliveryOptions, kits, products, type KitId, type ProductId } from '@/data/catalog';
 import type { CheckoutItem } from '@/lib/order';
 
@@ -32,10 +32,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 	const [ready, setReady] = useState(false);
 	const [cartOpen, setCartOpen] = useState(false);
 	const [toast, setToast] = useState<string | null>(null);
+	const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	useEffect(() => () => {
+		if (toastTimer.current !== null) clearTimeout(toastTimer.current);
+	}, []);
 
 	const showToast = (message: string) => {
+		if (toastTimer.current !== null) clearTimeout(toastTimer.current);
 		setToast(message);
-		window.setTimeout(() => setToast(null), 2200);
+		toastTimer.current = setTimeout(() => setToast(null), 2200);
 	};
 
 	const setQuantity = (index: number, quantity: number) => {

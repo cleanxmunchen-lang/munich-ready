@@ -5,7 +5,7 @@ import { ProductImage } from '@/components/product-image';
 import { useCart } from '@/components/cart-provider';
 
 export function Kits() {
-	const { items, addKit, showToast, setCartOpen } = useCart();
+	const { items, addKit, showToast } = useCart();
 	const selectedKitId = items.find((item) => item.kind === 'kit')?.id;
 	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({ 'essential-kit': 'usb-c-cable' });
 	const [added, setAdded] = useState<Record<string, boolean>>({});
@@ -65,8 +65,7 @@ export function Kits() {
 												aria-pressed={isSelected}
 												onClick={() => {
 												addKit(kit.id as KitId, cables[kit.id]);
-												showToast(`${kit.name} added ✓`);
-												setCartOpen(true);
+												showToast(`${kit.name} added to cart`);
 												if (!prefersReducedMotion) {
 													setAdded((s) => ({ ...s, [kit.id]: true }));
 													window.setTimeout(() => setAdded((s) => ({ ...s, [kit.id]: false })), 1400);
