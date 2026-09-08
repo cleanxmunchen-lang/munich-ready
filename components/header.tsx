@@ -45,8 +45,6 @@ export function Header() {
 					<div className="hidden sm:flex items-center gap-2">
 						<button onClick={() => setLang('en')} aria-label="Select English" className={`px-2 py-1 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
 						<button onClick={() => setLang('de')} aria-label="Select German" className={`px-2 py-1 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
-						<button onClick={() => setLang('zh')} aria-label="Select Chinese" className={`px-2 py-1 rounded ${lang === 'zh' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.zh')}</button>
-						<button onClick={() => setLang('ko')} aria-label="Select Korean" className={`px-2 py-1 rounded ${lang === 'ko' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.ko')}</button>
 					</div>
 				</div>
 
@@ -86,8 +84,6 @@ export function Header() {
 								<div className="flex gap-2 px-2 pb-2">
 									<button onClick={() => setLang('en')} className={`flex-1 py-2 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
 									<button onClick={() => setLang('de')} className={`flex-1 py-2 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
-									<button onClick={() => setLang('zh')} className={`flex-1 py-2 rounded ${lang === 'zh' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.zh')}</button>
-									<button onClick={() => setLang('ko')} className={`flex-1 py-2 rounded ${lang === 'ko' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.ko')}</button>
 								</div>
 								<a href="#ready-kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.readyKits')}</a>
 								<a href="#build-your-kit" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.buildKit')}</a>

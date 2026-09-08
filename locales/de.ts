@@ -95,9 +95,7 @@ const de = {
   },
   langLabels: {
     en: 'EN',
-    de: 'DE',
-    zh: '中文',
-    ko: '한국어'
+    de: 'DE'
   },
   products: {
     names: {

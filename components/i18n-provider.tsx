@@ -2,23 +2,18 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import en from '@/locales/en';
 import de from '@/locales/de';
-import zh from '@/locales/zh';
-import ko from '@/locales/ko';
 
-type Lang = 'en' | 'de' | 'zh' | 'ko';
+type Lang = 'en' | 'de';
 const LOCALE_KEY = 'munich-ready-language';
-
-const messages: Record<Lang, any> = { en, de, zh, ko };
+const messages: Record<Lang, any> = { en, de };
 
 function getPreferredLang(): Lang {
   try {
     if (typeof window === 'undefined') return 'en';
     const stored = localStorage.getItem(LOCALE_KEY) as Lang | null;
-    if (stored && messages[stored]) return stored;
-    const nav = navigator.language || (navigator as any).userLanguage || 'en';
-    if (nav.startsWith('de')) return 'de';
-    if (nav.startsWith('zh')) return 'zh';
-    if (nav.startsWith('ko')) return 'ko';
+    if (stored && (stored === 'en' || stored === 'de')) return stored;
+    const nav = (navigator && (navigator.language || (navigator as any).userLanguage)) || 'en';
+    if (typeof nav === 'string' && nav.startsWith('de')) return 'de';
     return 'en';
   } catch (e) {
     return 'en';
@@ -36,7 +31,6 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initial = getPreferredLang();
     setLangState(initial);
-    // set document lang attribute
     try {
       document.documentElement.lang = initial;
     } catch (e) {}
