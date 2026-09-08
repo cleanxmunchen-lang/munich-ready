@@ -16,14 +16,14 @@ function KitPreview({ id, featured = false }: { id: KitId; featured?: boolean })
     <a
       href={`#${kit.id}`}
       aria-label={`View ${kit.name}, ${formatPrice(kit.price)}`}
-      className={`hero-preview block min-w-0 rounded-3xl border border-[#17201a]/10 bg-white p-3 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#184f3a] focus-visible:ring-offset-4 md:hover:-translate-y-1 md:hover:shadow-lg motion-reduce:transform-none motion-reduce:transition-none ${featured ? 'row-span-2 sm:p-4 shadow-md' : 'shadow-sm'}`}
+      className={`hero-preview w-full block min-w-0 rounded-3xl border border-[#17201a]/10 bg-white p-3 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#184f3a] focus-visible:ring-offset-4 md:hover:-translate-y-1 md:hover:shadow-lg motion-reduce:transform-none motion-reduce:transition-none ${featured ? 'row-span-2 sm:p-4 shadow-md' : 'shadow-sm'}`}
     >
       <ProductImage
         src={`/products/${kit.id}.png`}
         name={kit.name}
         sizes={featured ? '(max-width: 768px) 96px, (max-width: 1023px) 25vw, 300px' : '(max-width: 768px) 96px, 128px'}
         priority={featured}
-        className={`aspect-square w-full ${featured ? '' : 'mx-auto max-w-24 sm:max-w-28 lg:max-w-32'}`}
+        className={`aspect-square w-full ${featured ? '' : 'mx-auto max-w-full sm:max-w-28 lg:max-w-32'}`}
       />
       <div className="mt-3">
         {badge && (
@@ -62,7 +62,11 @@ export function Hero() {
             ))}
           </div>
         </div>
-        <div aria-label="Preview ready-made kits" className="hero-showcase mx-auto grid w-full min-w-0 max-w-lg grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] items-center gap-3 md:max-w-none lg:gap-4">
+        <div
+          aria-label="Preview ready-made kits"
+          className="hero-showcase mx-auto grid w-full min-w-0 gap-3 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] md:items-center md:max-w-none lg:gap-4"
+        >
+          {/* Mobile: stack vertically full-width in desired order. Desktop keeps original two-column showcase layout. */}
           <KitPreview id="full-day-kit" featured />
           <KitPreview id="essential-kit" />
           <KitPreview id="power-kit" />
