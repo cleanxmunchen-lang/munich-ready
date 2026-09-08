@@ -83,7 +83,7 @@ export function Hero() {
         </div>
         <div
           aria-label="Preview ready-made kits"
-          className="hero-showcase mx-auto grid w-full min-w-0 gap-3 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] md:items-center md:max-w-none lg:gap-4"
+          className="hidden md:grid hero-showcase mx-auto w-full min-w-0 gap-3 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] md:items-center md:max-w-none lg:gap-4"
         >
           {/* Mobile: stack vertically full-width in desired order. Desktop keeps original two-column showcase layout. */}
           <KitPreview id="full-day-kit" featured />
