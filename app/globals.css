@@ -55,9 +55,10 @@ button, input, textarea, select { font: inherit; }
   .hero-actions a { width: 100%; }
   .hero-benefits { margin-top: 12px; gap: 6px; }
   .hero-benefits > div { gap: 6px; padding: 6px 8px; font-size: 11px; }
-  .hero-showcase { display: flex; max-width: 100%; gap: 10px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; padding: 4px 2px 8px; }
-  .hero-preview { flex: 0 0 132px; padding: 8px; border-radius: 16px; scroll-snap-align: start; box-shadow: 0 1px 3px #17201a0d; transform: none; }
-  .hero-preview > div:first-child { width: 96px; max-width: 96px; height: 96px; margin: 0 auto; }
+  /* Mobile: stacked previews — full width cards, larger images, no horizontal scrolling */
+  .hero-showcase { display: grid; grid-template-columns: 1fr; gap: 14px; max-width: 100%; overflow-x: visible; padding: 6px 0 8px; }
+  .hero-preview { width: 100%; max-width: none; padding: 10px; border-radius: 16px; box-shadow: 0 1px 3px #17201a0d; transform: none; }
+  .hero-preview > div:first-child { width: 100%; max-width: none; height: clamp(120px, 28vw, 160px); margin: 0 auto; }
   .hero-preview > div:last-child { margin-top: 6px; }
   .hero-preview span { display: none; }
   .hero-preview p { font-size: 14px; line-height: 20px; }
