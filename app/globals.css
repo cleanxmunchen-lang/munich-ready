@@ -13,3 +13,115 @@ button, input, textarea, select { font: inherit; }
 .button-secondary { @apply button border border-[#17201a]/15 bg-white hover:bg-[#f4f2ea] focus:ring-[#184f3a]; }
 .card { @apply rounded-3xl border border-[#17201a]/10 bg-white shadow-sm; }
 .eyebrow { @apply text-xs font-bold uppercase tracking-[.16em] text-[#184f3a]; }
+
+/* Phone and small-tablet layouts. Existing desktop utilities stay unchanged. */
+@media (max-width: 768px) {
+  .shell { min-width: 0; padding-left: 16px; padding-right: 16px; }
+  main { min-width: 0; }
+  main.shell { padding-top: 28px; padding-bottom: 32px; }
+  main h1 { overflow-wrap: break-word; }
+  main h2 { font-size: clamp(36px, 9vw, 44px); line-height: 1.12; }
+  button, .button, summary { min-height: 44px; }
+  input:not([type="radio"]):not([type="checkbox"]), textarea, select { max-width: 100%; min-height: 44px; font-size: 16px; }
+  main form { margin-top: 20px; gap: 16px; }
+  main form label { font-size: 16px; }
+  main form input, main form textarea { min-width: 0; }
+  main dl > .flex { flex-wrap: wrap; }
+  main dd { min-width: 0; overflow-wrap: anywhere; }
+  [id] { scroll-margin-top: 72px; }
+  #kits, #build, #how { padding-top: 32px; padding-bottom: 32px; }
+  #faq { padding-bottom: 32px; }
+  #faq > div { margin-top: 20px; }
+  #faq details { padding: 12px 16px; }
+  #faq summary { align-content: center; font-size: 16px; }
+  #faq details p { font-size: 16px; line-height: 1.5; }
+  footer { padding-top: 24px; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+  footer nav { gap: 0 16px; }
+  footer a { display: inline-flex; min-height: 44px; align-items: center; }
+
+  .site-header > .shell { height: 56px; gap: 12px; }
+  .site-header nav { display: none; }
+  .site-header a { display: inline-flex; min-height: 44px; align-items: center; white-space: nowrap; }
+  .header-cart { position: relative; width: 44px; height: 44px; justify-content: center; padding: 0; }
+  .header-cart > span { display: none; }
+  .header-cart > .mobile-cart-badge { display: flex; position: absolute; top: -3px; right: -5px; min-width: 20px; height: 20px; padding: 0 4px; align-items: center; justify-content: center; border-radius: 999px; background: var(--moss); color: white; font-size: 11px; font-weight: 700; }
+
+  .hero { padding-top: 20px; padding-bottom: 0; }
+  .hero > .grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .hero h1 { margin-top: 8px; font-size: clamp(42px, 11vw, 64px); line-height: 1.05; }
+  .hero h1 + p { margin-top: 12px; font-size: 16px; line-height: 1.4; }
+  .hero h1 + p + p { margin-top: 6px; font-size: 16px; line-height: 1.5; }
+  .hero-actions { flex-direction: column; margin-top: 16px; gap: 8px; }
+  .hero-actions a { width: 100%; }
+  .hero-benefits { margin-top: 12px; gap: 6px; }
+  .hero-benefits > div { gap: 6px; padding: 6px 8px; font-size: 11px; }
+  .hero-showcase { display: flex; max-width: 100%; gap: 10px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; padding: 4px 2px 8px; }
+  .hero-preview { flex: 0 0 132px; padding: 8px; border-radius: 16px; scroll-snap-align: start; box-shadow: 0 1px 3px #17201a0d; transform: none; }
+  .hero-preview > div:first-child { width: 96px; max-width: 96px; height: 96px; margin: 0 auto; }
+  .hero-preview > div:last-child { margin-top: 6px; }
+  .hero-preview span { display: none; }
+  .hero-preview p { font-size: 14px; line-height: 20px; }
+  .hero-preview p + p { margin-top: 0; font-size: 15px; }
+
+  #kits > p:last-of-type { margin-top: 8px; font-size: 16px; line-height: 1.5; }
+  #kits > .grid { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 16px; }
+  #kits article { min-width: 0; padding: 12px; }
+  .kit-image { width: 100%; height: clamp(240px, 66vw, 300px); min-height: 0; max-height: 300px; aspect-ratio: auto; }
+  .kit-content { padding-top: 10px; gap: 10px; }
+  .kit-content h3 { font-size: 20px; line-height: 1.3; }
+  .kit-content p { font-size: 16px; line-height: 1.4; }
+  .kit-extra { display: none; }
+  .kit-controls { margin-top: 0; }
+  .kit-controls > div:first-child { flex-wrap: wrap; gap: 6px; }
+  .kit-controls > div:last-child { margin-top: 10px; }
+  .cable-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 10px; gap: 8px; }
+  .cable-options button { padding: 8px 10px; }
+
+  #build > .shell > .flex { gap: 12px; flex-direction: column; }
+  #build > .shell > .flex > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; text-align: left; }
+  #build > .shell > .mt-6 { margin-top: 16px; }
+  .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .product-card { min-width: 0; }
+  .product-image { height: clamp(110px, 32vw, 160px); padding: 12px 12px 0; }
+  .product-info { flex: 1; flex-direction: column; flex-wrap: nowrap; align-items: stretch; justify-content: flex-start; gap: 10px; padding: 12px; }
+  .product-info > div { min-width: 0; width: 100%; }
+  .product-name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; min-height: 2.5em; font-size: clamp(15px, 4.4vw, 18px); line-height: 1.25; }
+  .product-name + div { font-size: 14px; line-height: 20px; }
+  .product-actions { margin-top: auto; }
+  .product-actions > button { width: 100%; height: 44px; min-height: 44px; padding: 0 8px; transform: none; }
+  .product-quantity { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; width: 100%; gap: 0; min-height: 44px; }
+  .product-quantity button { width: 44px; height: 44px; padding: 0; }
+  .product-quantity > div { min-width: 0; padding: 0; text-align: center; font-size: 14px; }
+
+  #how > ol { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 12px; }
+  #how li > svg { display: none; }
+  #how article { height: auto; padding: 16px; }
+  #how h3 { margin-top: 8px; font-size: 20px; }
+  #how h3 + p { font-size: 16px; line-height: 1.5; }
+  #how article > p:last-child { padding-top: 8px; font-size: 13px; }
+
+  .cart-dialog { display: flex; flex-direction: column; width: 100%; height: 100dvh; max-height: 100dvh; min-width: 0; margin: 0; border-radius: 0; padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
+  .cart-dialog > div { flex-shrink: 0; }
+  .cart-dialog h3 { font-size: 22px; }
+  .cart-dialog button[aria-label="Close cart"] { min-width: 44px; font-size: 16px; }
+  .cart-dialog > .cart-items { flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; margin-top: 8px; padding-right: 4px; }
+  .cart-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 12px 0; border-bottom: 1px solid #17201a1a; }
+  .cart-item > div:first-child { min-width: 0; overflow-wrap: anywhere; font-size: 16px; }
+  .cart-item-controls { justify-content: space-between; gap: 8px; }
+  .cart-item-controls button { min-width: 44px; }
+  .cart-item-controls > div:first-child { gap: 0; padding: 0; }
+  .cart-item-controls > div:first-child > div { padding: 0 8px; }
+  .cart-item-controls > div:last-child { flex-shrink: 0; }
+  .cart-item-controls > div:last-child button { margin-top: 0; font-size: 14px; }
+  .cart-dialog > div:last-child { gap: 8px; margin-top: 12px; }
+  .cart-dialog > div:last-child a { min-height: 48px; }
+  [role="status"] { bottom: max(16px, env(safe-area-inset-bottom)); }
+}
+
+@media (min-width: 390px) and (max-width: 768px) {
+  .shell { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

@@ -37,28 +37,29 @@ export function Kits() {
 								<ProductImage
 									src={`/products/${kit.id}.png`}
 									name={kit.name}
-									className="aspect-square w-full shrink-0 bg-transparent md:mx-auto md:min-h-[330px] md:max-h-[420px] md:w-[95%]"
+									sizes="(max-width: 768px) 300px, (max-width: 1023px) 45vw, 320px"
+									className="kit-image aspect-square w-full shrink-0 bg-transparent md:mx-auto md:min-h-[330px] md:max-h-[420px] md:w-[95%]"
 								/>
 								{/* Content area */}
-								<div className="flex-1 flex flex-col justify-between pt-4">
+								<div className="kit-content flex-1 flex flex-col justify-between pt-4">
 									<div>
 										<h3 className="text-xl font-semibold">{kit.name}</h3>
 										<p className="mt-1 text-sm text-black/65">{kit.description}</p>
 										{/* optional small line */}
 										{kit.id === 'essential-kit' ? (
-											<p className="mt-2 text-sm text-black/55">5 essentials included</p>
+											<p className="kit-extra mt-2 text-sm text-black/55">5 essentials included</p>
 										) : kit.id === 'full-day-kit' ? (
-											<p className="mt-2 text-sm text-black/55">Everything for a full festival day</p>
+											<p className="kit-extra mt-2 text-sm text-black/55">Everything for a full festival day</p>
 										) : null}
 									</div>
-									<div className="mt-4">
+									<div className="kit-controls mt-4">
 										<div className="flex items-center justify-between gap-4">
 											<div className="text-lg font-semibold">{formatPrice(kit.price)}</div>
 											{kit.id === 'full-day-kit' ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">BEST VALUE</div> : kit.popular ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">MOST POPULAR</div> : null}
 										</div>
 										{/* Cable selector for kits that need it */}
 										{kit.cableChoice && (
-											<div className="mt-3 flex items-center justify-center gap-3">
+											<div className="cable-options mt-3 flex items-center justify-center gap-3">
 												{(['usb-c-cable', 'lightning-cable'] as const).map((type) => (
 													<button
 														key={type}
