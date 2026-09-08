@@ -23,14 +23,12 @@ export function Kits() {
 						<article
 							key={kit.id}
 							className={`flex flex-col rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden p-4 ${kit.id === 'full-day-kit' ? 'ring-2 ring-[#184f3a]' : ''}`}>
-							{/* Card height set on md+ so columns match height */}
-							<div className="w-full md:h-[28rem] flex flex-col">
-								{/* Image area ~60% of card height on md+ */}
-								<div className="flex items-center justify-center md:h-[60%] h-auto">
-									<div className="w-3/4 md:w-3/4">
-										<ProductImage src={`/products/${kit.id}.png`} name={kit.name} className="w-full h-full bg-transparent p-2" />
-									</div>
-								</div>
+							<div className="w-full flex flex-1 flex-col">
+								<ProductImage
+									src={`/products/${kit.id}.png`}
+									name={kit.name}
+									className="aspect-square w-full shrink-0 bg-transparent md:mx-auto md:min-h-[330px] md:max-h-[420px] md:w-[95%]"
+								/>
 								{/* Content area */}
 								<div className="flex-1 flex flex-col justify-between pt-4">
 									<div>
