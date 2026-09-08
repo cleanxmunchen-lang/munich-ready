@@ -1,11 +1,32 @@
 'use client';
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { useCart } from '@/components/cart-provider';
 import { formatPrice } from '@/data/catalog';
 
 export function Header() {
 	const { items, total, setCartOpen } = useCart();
 	const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+	const [open, setOpen] = useState(false);
+	const panelRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		function onKey(e: KeyboardEvent) {
+			if (e.key === 'Escape') setOpen(false);
+		}
+		if (open) document.addEventListener('keydown', onKey);
+		return () => document.removeEventListener('keydown', onKey);
+	}, [open]);
+
+	useEffect(() => {
+		function onClick(e: MouseEvent) {
+			if (!open) return;
+			if (panelRef.current && !panelRef.current.contains(e.target as Node)) setOpen(false);
+		}
+		document.addEventListener('mousedown', onClick);
+		return () => document.removeEventListener('mousedown', onClick);
+	}, [open]);
+
 	return (
 		<header className="site-header sticky top-0 z-30 bg-[var(--sand)]/95 backdrop-blur-sm">
 			<div className="shell flex h-16 items-center justify-between">
@@ -18,7 +39,19 @@ export function Header() {
 						<Link href="#faq">FAQ</Link>
 					</nav>
 				</div>
-				<div className="flex items-center gap-3">
+
+				<div className="flex items-center gap-2">
+					{/* Mobile menu button (visible on mobile only) */}
+					<button
+						aria-label="Open menu"
+						onClick={() => setOpen((s) => !s)}
+						className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white p-2 shadow-sm md:hidden"
+					>
+						<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="#17201a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+							<path d="M3 12h18M3 6h18M3 18h18" />
+						</svg>
+					</button>
+
 					<button aria-label={`View cart (${itemCount} ${itemCount === 1 ? 'item' : 'items'})`} onClick={() => setCartOpen(true)} className="header-cart inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
 						<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
 							<path d="M3 3h2l.4 2M7 13h10l3-8H6.4" stroke="#17201a" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -31,6 +64,21 @@ export function Header() {
 					</button>
 				</div>
 			</div>
+
+			{/* Mobile nav panel */}
+			{open && (
+				<div className="fixed inset-0 z-40 md:hidden">
+					<div className="absolute inset-0 bg-black/30" />
+					<div ref={panelRef} className="absolute right-4 top-16 w-[88%] max-w-xs rounded-xl bg-white border border-black/5 shadow-lg p-4">
+						<nav className="flex flex-col gap-3">
+							<a href="#kits" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">Ready Kits</a>
+							<a href="#build" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">Build Your Kit</a>
+							<a href="#how" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">How It Works</a>
+							<a href="#faq" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">FAQ</a>
+						</nav>
+					</div>
+				</div>
+			)}
 		</header>
 	);
 }
