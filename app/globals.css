@@ -39,8 +39,10 @@ button, input, textarea, select { font: inherit; }
   footer nav { gap: 0 16px; }
   footer a { display: inline-flex; min-height: 44px; align-items: center; }
 
-  .site-header > .shell { height: 56px; gap: 12px; }
-  .site-header nav { display: none; }
+    .site-header > .shell { height: 56px; gap: 12px; }
+    /* Hide only the desktop nav inside the header shell on small screens.
+      Do NOT hide nav elements rendered elsewhere (mobile panel). */
+    .site-header > .shell nav { display: none; }
   .site-header a { display: inline-flex; min-height: 44px; align-items: center; white-space: nowrap; }
   .header-cart { position: relative; width: 44px; height: 44px; justify-content: center; padding: 0; }
   .header-cart > span { display: none; }
