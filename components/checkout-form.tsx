@@ -8,6 +8,21 @@ import { useI18n } from '@/components/i18n-provider';
 export function CheckoutForm() {
 	const cart = useCart();
 	const { t } = useI18n();
+
+	type DeliveryId = 'hotel' | 'priority' | 'express';
+
+	function deliveryLabel(id: DeliveryId | string, fallback: string) {
+		switch (id as DeliveryId) {
+			case 'hotel':
+				return t('checkout.hotelDelivery');
+			case 'priority':
+				return t('checkout.sameDay');
+			case 'express':
+				return t('checkout.express');
+			default:
+				return fallback;
+		}
+	}
 	const [hotel, setHotel] = useState<{ name: string; address?: string } | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
@@ -105,7 +120,7 @@ export function CheckoutForm() {
 						>
 							<input className="mr-3" checked={cart.deliveryType === option.id} onChange={() => cart.setDeliveryType(option.id)} type="radio" name="delivery" />
 										<strong>
-											{(option.id === 'hotel' ? t('checkout.hotelDelivery') : option.id === 'priority' ? t('checkout.sameDay') : option.id === 'express' ? t('checkout.express') : option.name)} · {formatPrice(option.price)}
+											{deliveryLabel(option.id, option.name)} · {formatPrice(option.price)}
 										</strong>
 								<span className="ml-6 mt-1 block text-xs text-black/60">{option.description}</span>
 						</label>

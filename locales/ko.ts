@@ -98,21 +98,19 @@ const ko = {
     de: 'DE',
     zh: '中文',
     ko: '한국어'
+  },
+  products: {
+    names: {
+      bag: '스몰 크로스바디 백',
+      'power-bank': '보조 배터리',
+      'usb-c-cable': 'USB-C 케이블',
+      'lightning-cable': 'Lightning 케이블',
+      poncho: '레인 판초',
+      plasters: '물집 패치',
+      wipes: '물티슈',
+      tissues: '포켓 티슈'
+    }
   }
 };
 
 export default ko;
-
-// Product names (Korean)
-ko.products = {
-  names: {
-    bag: '스몰 크로스바디 백',
-    'power-bank': '보조 배터리',
-    'usb-c-cable': 'USB-C 케이블',
-    'lightning-cable': 'Lightning 케이블',
-    poncho: '레인 판초',
-    plasters: '물집 패치',
-    wipes: '물티슈',
-    tissues: '포켓 티슈'
-  }
-};

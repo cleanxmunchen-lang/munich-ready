@@ -98,24 +98,22 @@ const de = {
     de: 'DE',
     zh: '中文',
     ko: '한국어'
+  },
+  products: {
+    names: {
+      bag: 'Small Crossbody Bag',
+      'power-bank': 'Power Bank',
+      'usb-c-cable': 'USB-C Kabel',
+      'lightning-cable': 'Lightning Kabel',
+      poncho: 'Regenponcho',
+      plasters: 'Blasenpflaster',
+      wipes: 'Feuchttücher',
+      tissues: 'Taschentücher'
+    }
   }
 };
 
 export default de;
-
-// Product names (German)
-de.products = {
-  names: {
-    bag: 'Small Crossbody Bag',
-    'power-bank': 'Power Bank',
-    'usb-c-cable': 'USB-C Kabel',
-    'lightning-cable': 'Lightning Kabel',
-    poncho: 'Regenponcho',
-    plasters: 'Blasenpflaster',
-    wipes: 'Feuchttücher',
-    tissues: 'Taschentücher'
-  }
-};
 
 
 

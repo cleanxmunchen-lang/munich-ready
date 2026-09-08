@@ -98,21 +98,19 @@ const zh = {
     de: 'DE',
     zh: '中文',
     ko: '한국어'
+  },
+  products: {
+    names: {
+      bag: '小型斜挎包',
+      'power-bank': '移动电源',
+      'usb-c-cable': 'USB-C 数据线',
+      'lightning-cable': 'Lightning 数据线',
+      poncho: '雨披',
+      plasters: '水泡贴',
+      wipes: '湿巾',
+      tissues: '纸巾'
+    }
   }
 };
 
 export default zh;
-
-// Product names (Chinese)
-zh.products = {
-  names: {
-    bag: '小型斜挎包',
-    'power-bank': '移动电源',
-    'usb-c-cable': 'USB-C 数据线',
-    'lightning-cable': 'Lightning 数据线',
-    poncho: '雨披',
-    plasters: '水泡贴',
-    wipes: '湿巾',
-    tissues: '纸巾'
-  }
-};
