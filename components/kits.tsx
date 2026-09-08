@@ -7,7 +7,7 @@ import { useCart } from '@/components/cart-provider';
 export function Kits() {
 	const { items, addKit, showToast, setCartOpen } = useCart();
 	const selectedKitId = items.find((item) => item.kind === 'kit')?.id;
-	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({});
+	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({ 'essential-kit': 'usb-c-cable' });
 	const [added, setAdded] = useState<Record<string, boolean>>({});
 
 	const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

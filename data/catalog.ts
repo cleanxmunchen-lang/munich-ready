@@ -13,7 +13,7 @@ export const products: Record<ProductId, { id: ProductId; name: string; price: n
 };
 
 export const kits: Record<KitId, { id: KitId; name: string; price: number; productIds: ProductId[]; popular?: boolean; cableChoice?: boolean; description: string }> = {
-  'essential-kit': { id: 'essential-kit', name: 'Essential Kit', price: 2490, productIds: ['bag', 'poncho', 'plasters', 'wipes', 'tissues'], description: 'The basics for a comfortable festival day.' },
+  'essential-kit': { id: 'essential-kit', name: 'Essential Kit', price: 2490, productIds: ['bag', 'poncho', 'plasters', 'wipes', 'tissues'], cableChoice: true, description: 'The basics for a comfortable festival day.' },
   'power-kit': { id: 'power-kit', name: 'Power Kit', price: 3490, productIds: ['bag', 'power-bank', 'usb-c-cable', 'poncho', 'plasters'], popular: true, cableChoice: true, description: 'Stay charged and prepared all day.' },
   'full-day-kit': { id: 'full-day-kit', name: 'Full Day Kit', price: 4490, productIds: ['bag', 'power-bank', 'usb-c-cable', 'poncho', 'plasters', 'wipes', 'tissues'], cableChoice: true, description: 'Everything you need from morning to evening.' }
 };
