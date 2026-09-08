@@ -1,12 +1,12 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
-import { kits, products, type KitId, formatPrice } from '@/data/catalog';
+import { kits, type KitId, formatPrice } from '@/data/catalog';
 import { ProductImage } from '@/components/product-image';
 import { useCart } from '@/components/cart-provider';
 
 export function Kits() {
-	const { addKit, showToast, setCartOpen } = useCart();
+	const { items, addKit, showToast, setCartOpen } = useCart();
+	const selectedKitId = items.find((item) => item.kind === 'kit')?.id;
 	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({});
 	const [added, setAdded] = useState<Record<string, boolean>>({});
 
@@ -19,10 +19,11 @@ export function Kits() {
 			<div className="mt-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
 				{(['essential-kit', 'power-kit', 'full-day-kit'] as const).map((kitId) => {
 					const kit = kits[kitId];
+					const isSelected = selectedKitId === kit.id;
 					return (
 						<article
 							key={kit.id}
-							className={`flex flex-col rounded-2xl border border-gray-100 bg-gray-50 overflow-hidden p-4 ${kit.id === 'full-day-kit' ? 'ring-2 ring-[#184f3a]' : ''}`}>
+							className={`flex flex-col rounded-2xl border-2 bg-gray-50 overflow-hidden p-4 ${isSelected ? 'border-[#184f3a]' : 'border-gray-100'}`}>
 							<div className="w-full flex flex-1 flex-col">
 								<ProductImage
 									src={`/products/${kit.id}.png`}
@@ -61,6 +62,7 @@ export function Kits() {
 										)}
 										<div className="mt-4">
 											<button
+												aria-pressed={isSelected}
 												onClick={() => {
 												addKit(kit.id as KitId, cables[kit.id]);
 												showToast(`${kit.name} added ✓`);
@@ -72,14 +74,7 @@ export function Kits() {
 											}}
 											className={`button-primary w-full transform transition duration-200 ${added[kit.id] ? 'scale-95' : ''}`}
 											>
-											{added[kit.id] ? (
-												<span className="inline-flex items-center gap-2">
-													<svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6.5L5.2 10.7L15 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-													Added
-												</span>
-											) : (
-												'Choose Kit'
-											)}
+											{isSelected ? '✓ Selected' : 'Choose Kit'}
 											</button>
 										</div>
 									</div>
