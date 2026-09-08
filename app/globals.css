@@ -55,8 +55,7 @@ button, input, textarea, select { font: inherit; }
   .hero-actions a { width: 100%; }
   .hero-benefits { margin-top: 12px; gap: 6px; }
   .hero-benefits > div { gap: 6px; padding: 6px 8px; font-size: 11px; }
-  /* Mobile: stacked previews — full width cards, larger images, no horizontal scrolling */
-  .hero-showcase { display: grid; grid-template-columns: 1fr; gap: 14px; max-width: 100%; overflow-x: visible; padding: 6px 0 8px; }
+  /* Mobile: hero previews removed on mobile; desktop layout preserved via component classes */
   .hero-preview { width: 100%; max-width: none; padding: 10px; border-radius: 16px; box-shadow: 0 1px 3px #17201a0d; transform: none; }
   .hero-preview > div:first-child { width: 100%; max-width: none; height: clamp(120px, 28vw, 160px); margin: 0 auto; }
   .hero-preview > div:last-child { margin-top: 6px; }
