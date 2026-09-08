@@ -16,23 +16,33 @@ function KitPreview({ id, featured = false }: { id: KitId; featured?: boolean })
     <a
       href={`#${kit.id}`}
       aria-label={`View ${kit.name}, ${formatPrice(kit.price)}`}
-      className={`hero-preview w-full block min-w-0 rounded-3xl border border-[#17201a]/10 bg-white p-3 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#184f3a] focus-visible:ring-offset-4 md:hover:-translate-y-1 md:hover:shadow-lg motion-reduce:transform-none motion-reduce:transition-none ${featured ? 'row-span-2 sm:p-4 shadow-md' : 'shadow-sm'}`}
+      className={`hero-preview w-full block min-w-0 rounded-3xl border border-[#17201a]/10 bg-white p-2 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#184f3a] focus-visible:ring-offset-4 md:hover:-translate-y-1 md:hover:shadow-lg motion-reduce:transform-none motion-reduce:transition-none ${featured ? 'row-span-2 sm:p-4 shadow-md' : 'shadow-sm'}`}
     >
+      {/* Image area: larger on mobile, keep aspect on md+ */}
       <ProductImage
         src={`/products/${kit.id}.png`}
         name={kit.name}
-        sizes={featured ? '(max-width: 768px) 96px, (max-width: 1023px) 25vw, 300px' : '(max-width: 768px) 96px, 128px'}
+        sizes={featured ? '(max-width: 768px) 90vw, (max-width: 1023px) 25vw, 300px' : '(max-width: 768px) 90vw, 128px'}
         priority={featured}
-        className={`aspect-square w-full ${featured ? '' : 'mx-auto max-w-full sm:max-w-28 lg:max-w-32'}`}
+        className={`relative w-full h-[220px] sm:h-[240px] md:aspect-square md:h-auto p-0`}
       />
-      <div className="mt-3">
-        {badge && (
-          <span className="mb-2 inline-block rounded-full bg-[#184f3a] px-2 py-1 text-[9px] font-bold leading-3 tracking-wide text-white sm:text-[10px]">
-            {badge}
-          </span>
-        )}
-        <p className={`font-semibold ${featured ? 'text-lg sm:text-xl' : 'text-sm'}`}>{kit.name}</p>
-        <p className={`mt-1 font-semibold text-[#184f3a] ${featured ? 'text-xl sm:text-2xl' : 'text-base'}`}>{formatPrice(kit.price)}</p>
+
+      {/* Compact footer */}
+      <div className="mt-3 px-1">
+        <div className="flex items-center justify-between gap-3">
+          <p className="font-semibold text-sm truncate">{kit.name}</p>
+          {badge ? (
+            <span className="inline-block rounded-full bg-[#184f3a] px-2 py-0.5 text-[10px] font-bold leading-none tracking-wide text-white">{badge}</span>
+          ) : (
+            <div />
+          )}
+        </div>
+        <div className="mt-2 flex items-center justify-between">
+          <div className="text-sm font-semibold text-[#184f3a]">{formatPrice(kit.price)}</div>
+          <svg className="h-5 w-5 text-black/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </div>
       </div>
     </a>
   );
