@@ -1,14 +1,21 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { kits, type KitId, formatPrice } from '@/data/catalog';
 import { ProductImage } from '@/components/product-image';
 import { useCart } from '@/components/cart-provider';
 
 export function Kits() {
-	const { items, addKit, showToast } = useCart();
-	const selectedKitId = items.find((item) => item.kind === 'kit')?.id;
+	const { items, addKit, setKitCable, remove, showToast } = useCart();
+	const selectedKit = items.find((item) => item.kind === 'kit');
 	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({ 'essential-kit': 'usb-c-cable' });
 	const [added, setAdded] = useState<Record<string, boolean>>({});
+
+	useEffect(() => {
+		if (selectedKit?.cableType) {
+			const { id, cableType } = selectedKit;
+			setCables((previous) => previous[id] === cableType ? previous : { ...previous, [id]: cableType });
+		}
+	}, [selectedKit]);
 
 	const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	return (
@@ -19,7 +26,8 @@ export function Kits() {
 			<div className="mt-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
 				{(['essential-kit', 'power-kit', 'full-day-kit'] as const).map((kitId) => {
 					const kit = kits[kitId];
-					const isSelected = selectedKitId === kit.id;
+					const isSelected = selectedKit?.id === kit.id;
+					const cableType = (isSelected ? selectedKit?.cableType : undefined) ?? cables[kit.id];
 					return (
 						<article
 							key={kit.id}
@@ -53,8 +61,12 @@ export function Kits() {
 												{(['usb-c-cable', 'lightning-cable'] as const).map((type) => (
 													<button
 														key={type}
-														onClick={() => setCables({ ...cables, [kit.id]: type })}
-														className={`rounded-full px-4 py-2 text-sm font-semibold ${cables[kit.id] === type ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>
+														aria-pressed={cableType === type}
+														onClick={() => {
+															setCables((previous) => ({ ...previous, [kit.id]: type }));
+															if (isSelected) setKitCable(kit.id, type);
+														}}
+														className={`rounded-full px-4 py-2 text-sm font-semibold ${cableType === type ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>
 														{type === 'usb-c-cable' ? 'USB-C' : 'Lightning'}
 													</button>
 												))}
@@ -64,7 +76,13 @@ export function Kits() {
 											<button
 												aria-pressed={isSelected}
 												onClick={() => {
-												addKit(kit.id as KitId, cables[kit.id]);
+												if (isSelected) {
+													remove(items.findIndex((item) => item.kind === 'kit' && item.id === kit.id));
+													setAdded((previous) => ({ ...previous, [kit.id]: false }));
+													showToast(`${kit.name} removed from cart`);
+													return;
+												}
+												addKit(kit.id as KitId, cableType);
 												showToast(`${kit.name} added to cart`);
 												if (!prefersReducedMotion) {
 													setAdded((s) => ({ ...s, [kit.id]: true }));

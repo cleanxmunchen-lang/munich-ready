@@ -9,6 +9,7 @@ type CartContextType = {
 	refCode: string | null;
 	setRefCode: (ref: string | null) => void;
 	addKit: (id: KitId, cableType?: 'usb-c-cable' | 'lightning-cable') => void;
+	setKitCable: (id: KitId, cableType: 'usb-c-cable' | 'lightning-cable') => void;
 	addProduct: (id: ProductId) => void;
 	setCustom: (ids: ProductId[]) => void;
 	remove: (index: number) => void;
@@ -77,6 +78,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 			refCode,
 			setRefCode,
 			addKit: (id: KitId, cableType?: 'usb-c-cable' | 'lightning-cable') => setItems((previous) => [...previous.filter((item) => item.kind !== 'kit'), { kind: 'kit', id, cableType, quantity: 1 }]),
+			setKitCable: (id: KitId, cableType: 'usb-c-cable' | 'lightning-cable') => setItems((previous) => previous.map((item) => item.kind === 'kit' && item.id === id ? { ...item, cableType } : item)),
 			setCustom: (ids: ProductId[]) => setItems((previous) => [...previous.filter((item) => item.kind === 'kit'), ...ids.map((id) => ({ kind: 'product' as const, id, quantity: 1 }))]),
 			addProduct: (id: ProductId) => setItems((previous) => {
 				const found = previous.findIndex((it) => it.kind === 'product' && it.id === id);
