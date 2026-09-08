@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { formatPrice, products, type ProductId } from '@/data/catalog';
 import { ProductImage } from '@/components/product-image';
 import { useCart } from '@/components/cart-provider';
+import { useI18n } from '@/components/i18n-provider';
 
 export function Builder() {
 	const { items, addProduct, setQuantity, subtotal, showToast } = useCart();
@@ -11,14 +12,15 @@ export function Builder() {
 
 	const findIndex = (id: ProductId) => items.findIndex((it) => it.kind === 'product' && it.id === id);
 
+	const { t } = useI18n();
 	return (
 		<section id="build-your-kit" className="bg-[#f7faf6] py-12 sm:py-20">
 			<div className="shell">
-				<p className="eyebrow">Build your own</p>
+				<p className="eyebrow">{t('build.title')}</p>
 				<div className="mt-2 flex flex-col justify-between gap-4 sm:flex-row">
-					<h2 className="text-3xl font-bold tracking-tight sm:text-5xl">Build Your Kit</h2>
+					<h2 className="text-3xl font-bold tracking-tight sm:text-5xl">{t('build.title')}</h2>
 					<div className="rounded-2xl bg-white px-5 py-3 text-right">
-						<span className="block text-xs uppercase tracking-wider">Your kit · {items.filter(i => i.kind === 'product').reduce((s, it) => s + it.quantity, 0)} items</span>
+						<span className="block text-xs uppercase tracking-wider">{t('build.yourKit')} · {items.filter(i => i.kind === 'product').reduce((s, it) => s + it.quantity, 0)} {t('build.noItems')}</span>
 						<strong className="text-xl">{formatPrice(subtotal)}</strong>
 					</div>
 				</div>
@@ -34,8 +36,8 @@ export function Builder() {
 										<ProductImage src={product.image} name={product.name} sizes="(max-width: 389px) calc((100vw - 44px) / 2), (max-width: 768px) calc((100vw - 52px) / 2), (max-width: 1023px) 30vw, 240px" className="h-full w-full" />
 									</div>
 									<div className="product-info p-3 flex flex-wrap items-center justify-between gap-2">
-										<div>
-											<div className="product-name text-sm font-bold" title={product.name}>{product.name}</div>
+											<div>
+											<div className="product-name text-sm font-bold" title={product.name}>{t(`products.names.${product.id}`) || product.name}</div>
 											<div className="mt-1 text-xs text-black/60">{formatPrice(product.price)}</div>
 										</div>
 										<div className="product-actions">
@@ -43,7 +45,7 @@ export function Builder() {
 												<div className="product-quantity flex items-center gap-2">
 													<button className="px-3 py-1 rounded border" onClick={() => setQuantity(idx, inCart - 1)} aria-label={`Decrease ${product.name}`}>-</button>
 													<div className="px-3">{inCart}</div>
-													<button className="px-3 py-1 rounded border" onClick={() => { setQuantity(idx, inCart + 1); showToast(`${product.name} added to cart. Quantity: ${inCart + 1}`); }} aria-label={`Increase ${product.name}`}>+</button>
+													<button className="px-3 py-1 rounded border" onClick={() => { setQuantity(idx, inCart + 1); showToast(`${t(`products.names.${product.id}`) || product.name} added to cart. Quantity: ${inCart + 1}`); }} aria-label={`Increase ${product.name}`}>+</button>
 												</div>
 											) : (
 												<button
@@ -51,12 +53,12 @@ export function Builder() {
 													className={`button-primary whitespace-nowrap transform transition duration-200 motion-reduce:transform-none motion-reduce:transition-none ${added[product.id] ? 'scale-95' : ''}`}
 													onClick={() => {
 														addProduct(product.id as ProductId);
-														showToast(`${product.name} added to cart`);
+														showToast(`${t(`products.names.${product.id}`) || product.name} added to cart`);
 														setAdded((s) => ({ ...s, [product.id]: true }));
 														window.setTimeout(() => setAdded((s) => ({ ...s, [product.id]: false })), 1400);
 													}}
 												>
-													{added[product.id] ? '✓ Added' : 'Add'}
+													{added[product.id] ? t('build.added') : t('build.add')}
 												</button>
 											)}
 										</div>

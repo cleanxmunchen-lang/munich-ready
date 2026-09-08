@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { kits, type KitId, formatPrice } from '@/data/catalog';
 import { ProductImage } from '@/components/product-image';
 import { useCart } from '@/components/cart-provider';
+import { useI18n } from '@/components/i18n-provider';
 
 export function Kits() {
 	const { items, addKit, setKitCable, remove, showToast } = useCart();
@@ -18,11 +19,12 @@ export function Kits() {
 	}, [selectedKit]);
 
 	const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const { t } = useI18n();
 	return (
 		<section id="ready-kits" className="shell py-12 sm:py-20">
-			<p className="eyebrow">MUNICH HOTEL DELIVERY</p>
-			<h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">Ready-made kits</h2>
-			<p className="mt-3 text-sm text-black/65">Choose a curated kit — delivered directly to your hotel.</p>
+			<p className="eyebrow">{t('hero.eyebrow')}</p>
+			<h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">{t('kits.title')}</h2>
+			<p className="mt-3 text-sm text-black/65">{t('kits.description')}</p>
 			<div className="mt-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
 				{(['essential-kit', 'power-kit', 'full-day-kit'] as const).map((kitId) => {
 					const kit = kits[kitId];
@@ -43,19 +45,19 @@ export function Kits() {
 								{/* Content area */}
 								<div className="kit-content flex-1 flex flex-col justify-between pt-4">
 									<div>
-										<h3 className="text-xl font-semibold">{kit.name}</h3>
+										<h3 className="text-xl font-semibold">{t(`kits.names.${kit.id}`)}</h3>
 										<p className="mt-1 text-sm text-black/65">{kit.description}</p>
 										{/* optional small line */}
 										{kit.id === 'essential-kit' ? (
-											<p className="kit-extra mt-2 text-sm text-black/55">5 essentials included</p>
+											<p className="kit-extra mt-2 text-sm text-black/55">{t('kits.extra.essential-kit')}</p>
 										) : kit.id === 'full-day-kit' ? (
-											<p className="kit-extra mt-2 text-sm text-black/55">Everything for a full festival day</p>
+											<p className="kit-extra mt-2 text-sm text-black/55">{t('kits.extra.full-day-kit')}</p>
 										) : null}
 									</div>
 									<div className="kit-controls mt-4">
 										<div className="flex items-center justify-between gap-4">
 											<div className="text-lg font-semibold">{formatPrice(kit.price)}</div>
-											{kit.id === 'full-day-kit' ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">BEST VALUE</div> : kit.popular ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">MOST POPULAR</div> : null}
+											{kit.id === 'full-day-kit' ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">{t('kits.badges.bestValue')}</div> : kit.popular ? <div className="mt-0 rounded-full bg-[#184f3a] px-3 py-1 text-xs font-bold text-white">{t('kits.badges.mostPopular')}</div> : null}
 										</div>
 										{/* Cable selector for kits that need it */}
 										{kit.cableChoice && (
@@ -69,7 +71,7 @@ export function Kits() {
 															if (isSelected) setKitCable(kit.id, type);
 														}}
 														className={`rounded-full px-4 py-2 text-sm font-semibold ${cableType === type ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>
-														{type === 'usb-c-cable' ? 'USB-C' : 'Lightning'}
+														{type === 'usb-c-cable' ? t('kits.usbC') : t('kits.lightning')}
 													</button>
 												))}
 											</div>
@@ -93,7 +95,7 @@ export function Kits() {
 											}}
 											className={`button-primary w-full transform transition duration-200 ${added[kit.id] ? 'scale-95' : ''}`}
 											>
-											{isSelected ? '✓ Selected' : 'Choose Kit'}
+											{isSelected ? t('kits.selected') : t('kits.choose')}
 											</button>
 										</div>
 									</div>

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useCart } from '@/components/cart-provider';
 import { formatPrice } from '@/data/catalog';
+import { useI18n } from '@/components/i18n-provider';
 
 export function Header() {
 	const { items, total, setCartOpen } = useCart();
@@ -27,23 +28,33 @@ export function Header() {
 		return () => document.removeEventListener('mousedown', onClick);
 	}, [open]);
 
-	return (
+    const { t, lang, setLang } = useI18n();
+
+    return (
 		<header className="site-header sticky top-0 z-30 bg-[var(--sand)]/95 backdrop-blur-sm">
 			<div className="shell flex h-16 items-center justify-between">
 				<div className="flex items-center gap-4">
 					<Link href="/" className="text-lg font-black tracking-tight">MUNICH <span className="text-[#184f3a]">READY</span></Link>
 					<nav className="hidden gap-4 text-sm font-semibold sm:flex">
-						<Link href="#ready-kits">Ready Kits</Link>
-						<Link href="#build-your-kit">Build Your Kit</Link>
-						<Link href="#how-it-works">How It Works</Link>
-						<Link href="#faq">FAQ</Link>
+						<Link href="#ready-kits">{t('nav.readyKits')}</Link>
+						<Link href="#build-your-kit">{t('nav.buildKit')}</Link>
+						<Link href="#how-it-works">{t('nav.howItWorks')}</Link>
+						<Link href="#faq">{t('nav.faq')}</Link>
 					</nav>
+					{/* Desktop language switcher */}
+					<div className="hidden sm:flex items-center gap-2">
+						<button onClick={() => setLang('en')} aria-label="Select English" className={`px-2 py-1 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
+						<button onClick={() => setLang('de')} aria-label="Select German" className={`px-2 py-1 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
+						<button onClick={() => setLang('zh')} aria-label="Select Chinese" className={`px-2 py-1 rounded ${lang === 'zh' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.zh')}</button>
+						<button onClick={() => setLang('ko')} aria-label="Select Korean" className={`px-2 py-1 rounded ${lang === 'ko' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.ko')}</button>
+					</div>
 				</div>
 
 				<div className="flex items-center gap-2">
 					{/* Mobile menu button (visible on mobile only) */}
 					<button
 						aria-label="Open menu"
+						aria-expanded={open}
 						onClick={() => setOpen((s) => !s)}
 						className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white p-2 shadow-sm md:hidden"
 					>
@@ -66,17 +77,24 @@ export function Header() {
 			</div>
 
 			{/* Mobile nav panel */}
-			{open && (
+				{open && (
 				<div className="fixed inset-0 z-40 md:hidden">
 					<div className="absolute inset-0 bg-black/30" />
-					<div ref={panelRef} className="absolute right-4 top-16 w-[88%] max-w-xs rounded-xl bg-white border border-black/5 shadow-lg p-2">
-						<nav className="flex flex-col">
-							<a href="#ready-kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Ready Kits</a>
-							<a href="#build-your-kit" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Build Your Kit</a>
-							<a href="#how-it-works" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">How It Works</a>
-							<a href="#faq" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">FAQ</a>
-						</nav>
-					</div>
+						<div ref={panelRef} className="absolute left-4 right-4 top-full mt-3 max-w-xs mx-auto rounded-xl bg-white border border-black/5 shadow-lg p-2">
+							<nav className="flex flex-col">
+								{/* Mobile language selector */}
+								<div className="flex gap-2 px-2 pb-2">
+									<button onClick={() => setLang('en')} className={`flex-1 py-2 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
+									<button onClick={() => setLang('de')} className={`flex-1 py-2 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
+									<button onClick={() => setLang('zh')} className={`flex-1 py-2 rounded ${lang === 'zh' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.zh')}</button>
+									<button onClick={() => setLang('ko')} className={`flex-1 py-2 rounded ${lang === 'ko' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.ko')}</button>
+								</div>
+								<a href="#ready-kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.readyKits')}</a>
+								<a href="#build-your-kit" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.buildKit')}</a>
+								<a href="#how-it-works" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.howItWorks')}</a>
+								<a href="#faq" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.faq')}</a>
+							</nav>
+						</div>
 				</div>
 			)}
 		</header>

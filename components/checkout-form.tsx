@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 import { useCart } from '@/components/cart-provider';
 import { deliveryOptions, formatPrice, kits, products } from '@/data/catalog';
+import { useI18n } from '@/components/i18n-provider';
 
 export function CheckoutForm() {
 	const cart = useCart();
+	const { t } = useI18n();
 	const [hotel, setHotel] = useState<{ name: string; address?: string } | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
@@ -50,9 +52,9 @@ export function CheckoutForm() {
 	if (!cart.items.length)
 		return (
 			<div className="mt-8 card p-6">
-				<p>Your cart is empty.</p>
+				<p>{t('cart.continueShopping')}</p>
 				<Link className="button-primary mt-4" href="/#ready-kits">
-					Browse kits
+					{t('nav.readyKits')}
 				</Link>
 			</div>
 		);
@@ -60,18 +62,18 @@ export function CheckoutForm() {
 	return (
 		<form className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_.8fr]" onSubmit={submit}>
 			<div className="card p-5 sm:p-7">
-				<h2 className="text-xl font-bold">Delivery & guest details</h2>
+				<h2 className="text-xl font-bold">{t('checkout.guestName')}</h2>
 				<div className="mt-5 grid gap-4">
 					<label className="text-sm font-semibold">
-						Guest name
+						{t('checkout.guestName')}
 						<input required name="customerName" className="mt-1 w-full rounded-xl border border-black/15 p-3" autoComplete="name" />
 					</label>
 					<label className="text-sm font-semibold">
-						WhatsApp / phone
+						{t('checkout.phone')}
 						<input required name="phone" type="tel" className="mt-1 w-full rounded-xl border border-black/15 p-3" autoComplete="tel" />
 					</label>
 					<label className="text-sm font-semibold">
-						Room number <span className="font-normal text-black/50">optional</span>
+						{t('checkout.roomNumber')} <span className="font-normal text-black/50">optional</span>
 						<input name="roomNumber" className="mt-1 w-full rounded-xl border border-black/15 p-3" />
 					</label>
 					{hotel ? (
@@ -82,7 +84,7 @@ export function CheckoutForm() {
 						</div>
 					) : (
 						<label className="text-sm font-semibold">
-							Hotel or delivery destination
+							{t('checkout.destination')}
 							<input required name="destination" className="mt-1 w-full rounded-xl border border-black/15 p-3" placeholder="Hotel name and address" />
 						</label>
 					)}
@@ -92,7 +94,7 @@ export function CheckoutForm() {
 					</label>
 				</div>
 
-				<h3 className="mt-7 font-bold">Delivery option</h3>
+				<h3 className="mt-7 font-bold">{t('checkout.delivery')}</h3>
 				<div className="mt-3 space-y-2">
 					{deliveryOptions.map((option) => (
 						<label
@@ -102,10 +104,10 @@ export function CheckoutForm() {
 							}`}
 						>
 							<input className="mr-3" checked={cart.deliveryType === option.id} onChange={() => cart.setDeliveryType(option.id)} type="radio" name="delivery" />
-							<strong>
-								{option.name} · {formatPrice(option.price)}
-							</strong>
-							<span className="ml-6 mt-1 block text-xs text-black/60">{option.description}</span>
+										<strong>
+											{(option.id === 'hotel' ? t('checkout.hotelDelivery') : option.id === 'priority' ? t('checkout.sameDay') : option.id === 'express' ? t('checkout.express') : option.name)} · {formatPrice(option.price)}
+										</strong>
+								<span className="ml-6 mt-1 block text-xs text-black/60">{option.description}</span>
 						</label>
 					))}
 				</div>
@@ -141,7 +143,7 @@ export function CheckoutForm() {
 				</div>
 				{error && <p className="mt-4 text-sm text-red-700">{error}</p>}
 				<button disabled={loading} className="button-primary mt-5 w-full disabled:opacity-50">
-					{loading ? 'Taking you to payment…' : `Pay ${formatPrice(cart.total)}`}
+					{loading ? t('checkout.continueToPayment') + '…' : `${t('checkout.continueToPayment')} · ${formatPrice(cart.total)}`}
 				</button>
 				<p className="mt-3 text-center text-xs text-black/50">Secure payment through Stripe</p>
 			</aside>
