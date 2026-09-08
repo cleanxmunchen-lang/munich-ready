@@ -51,7 +51,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
 				<Kits />
 				<Builder />
 
-				<section id="how" className="shell py-14 sm:py-20">
+				<section id="how-it-works" className="shell py-14 sm:py-20">
 					<p className="eyebrow">How it works</p>
 					<h2 className="mt-2 text-3xl font-bold sm:text-5xl">From scan to ready.</h2>
 					<ol role="list" className="mt-8 grid gap-3 sm:grid-cols-3 sm:gap-8">

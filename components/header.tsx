@@ -33,9 +33,9 @@ export function Header() {
 				<div className="flex items-center gap-4">
 					<Link href="/" className="text-lg font-black tracking-tight">MUNICH <span className="text-[#184f3a]">READY</span></Link>
 					<nav className="hidden gap-4 text-sm font-semibold sm:flex">
-						<Link href="#kits">Ready Kits</Link>
-						<Link href="#build">Build Your Kit</Link>
-						<Link href="#how">How It Works</Link>
+						<Link href="#ready-kits">Ready Kits</Link>
+						<Link href="#build-your-kit">Build Your Kit</Link>
+						<Link href="#how-it-works">How It Works</Link>
 						<Link href="#faq">FAQ</Link>
 					</nav>
 				</div>
@@ -71,9 +71,9 @@ export function Header() {
 					<div className="absolute inset-0 bg-black/30" />
 					<div ref={panelRef} className="absolute right-4 top-16 w-[88%] max-w-xs rounded-xl bg-white border border-black/5 shadow-lg p-2">
 						<nav className="flex flex-col">
-							<a href="#kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Ready Kits</a>
-							<a href="#build" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Build Your Kit</a>
-							<a href="#how" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">How It Works</a>
+							<a href="#ready-kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Ready Kits</a>
+							<a href="#build-your-kit" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Build Your Kit</a>
+							<a href="#how-it-works" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">How It Works</a>
 							<a href="#faq" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">FAQ</a>
 						</nav>
 					</div>

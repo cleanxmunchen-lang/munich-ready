@@ -29,7 +29,7 @@ button, input, textarea, select { font: inherit; }
   main dl > .flex { flex-wrap: wrap; }
   main dd { min-width: 0; overflow-wrap: anywhere; }
   [id] { scroll-margin-top: 72px; }
-  #kits, #build, #how { padding-top: 32px; padding-bottom: 32px; }
+  #ready-kits, #build-your-kit, #how-it-works { padding-top: 32px; padding-bottom: 32px; }
   #faq { padding-bottom: 32px; }
   #faq > div { margin-top: 20px; }
   #faq details { padding: 12px 16px; }
@@ -67,9 +67,9 @@ button, input, textarea, select { font: inherit; }
   .hero-preview p { font-size: 14px; line-height: 20px; }
   .hero-preview p + p { margin-top: 0; font-size: 15px; }
 
-  #kits > p:last-of-type { margin-top: 8px; font-size: 16px; line-height: 1.5; }
-  #kits > .grid { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 16px; }
-  #kits article { min-width: 0; padding: 12px; }
+  #ready-kits > p:last-of-type { margin-top: 8px; font-size: 16px; line-height: 1.5; }
+  #ready-kits > .grid { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 16px; }
+  #ready-kits article { min-width: 0; padding: 12px; }
   .kit-image { width: 100%; height: clamp(240px, 66vw, 300px); min-height: 0; max-height: 300px; aspect-ratio: auto; }
   .kit-content { padding-top: 10px; gap: 10px; }
   .kit-content h3 { font-size: 20px; line-height: 1.3; }
@@ -81,9 +81,9 @@ button, input, textarea, select { font: inherit; }
   .cable-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 10px; gap: 8px; }
   .cable-options button { padding: 8px 10px; }
 
-  #build > .shell > .flex { gap: 12px; flex-direction: column; }
-  #build > .shell > .flex > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; text-align: left; }
-  #build > .shell > .mt-6 { margin-top: 16px; }
+  #build-your-kit > .shell > .flex { gap: 12px; flex-direction: column; }
+  #build-your-kit > .shell > .flex > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; text-align: left; }
+  #build-your-kit > .shell > .mt-6 { margin-top: 16px; }
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .product-card { min-width: 0; }
   .product-image { height: clamp(110px, 32vw, 160px); padding: 12px 12px 0; }
@@ -97,12 +97,12 @@ button, input, textarea, select { font: inherit; }
   .product-quantity button { width: 44px; height: 44px; padding: 0; }
   .product-quantity > div { min-width: 0; padding: 0; text-align: center; font-size: 14px; }
 
-  #how > ol { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 12px; }
-  #how li > svg { display: none; }
-  #how article { height: auto; padding: 16px; }
-  #how h3 { margin-top: 8px; font-size: 20px; }
-  #how h3 + p { font-size: 16px; line-height: 1.5; }
-  #how article > p:last-child { padding-top: 8px; font-size: 13px; }
+  #how-it-works > ol { grid-template-columns: minmax(0, 1fr); margin-top: 20px; gap: 12px; }
+  #how-it-works li > svg { display: none; }
+  #how-it-works article { height: auto; padding: 16px; }
+  #how-it-works h3 { margin-top: 8px; font-size: 20px; }
+  #how-it-works h3 + p { font-size: 16px; line-height: 1.5; }
+  #how-it-works article > p:last-child { padding-top: 8px; font-size: 13px; }
 
   .cart-dialog { display: flex; flex-direction: column; width: 100%; height: 100dvh; max-height: 100dvh; min-width: 0; margin: 0; border-radius: 0; padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); }
   .cart-dialog > div { flex-shrink: 0; }

@@ -67,8 +67,8 @@ export function Hero() {
           <p className="mt-4 text-lg font-medium">Forgot something? We’ve got you covered.</p>
           <p className="mt-2 max-w-lg text-base leading-7 text-black/65">Travel &amp; festival essentials delivered directly to your hotel in Munich.</p>
           <div className="hero-actions mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link className="button-primary" href="#kits">Shop Ready Kits</Link>
-            <Link className="button-secondary" href="#build">Build Your Own Kit</Link>
+            <Link className="button-primary" href="#ready-kits">Shop Ready Kits</Link>
+            <Link className="button-secondary" href="#build-your-kit">Build Your Own Kit</Link>
           </div>
           <div className="hero-benefits mt-5 flex flex-wrap gap-2">
             {benefits.map(({ label, icon }) => (

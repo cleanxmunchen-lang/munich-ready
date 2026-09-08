@@ -19,7 +19,7 @@ export function Kits() {
 
 	const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	return (
-		<section id="kits" className="shell py-12 sm:py-20">
+		<section id="ready-kits" className="shell py-12 sm:py-20">
 			<p className="eyebrow">MUNICH HOTEL DELIVERY</p>
 			<h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl">Ready-made kits</h2>
 			<p className="mt-3 text-sm text-black/65">Choose a curated kit — delivered directly to your hotel.</p>

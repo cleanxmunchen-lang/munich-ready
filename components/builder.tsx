@@ -12,7 +12,7 @@ export function Builder() {
 	const findIndex = (id: ProductId) => items.findIndex((it) => it.kind === 'product' && it.id === id);
 
 	return (
-		<section id="build" className="bg-[#f7faf6] py-12 sm:py-20">
+		<section id="build-your-kit" className="bg-[#f7faf6] py-12 sm:py-20">
 			<div className="shell">
 				<p className="eyebrow">Build your own</p>
 				<div className="mt-2 flex flex-col justify-between gap-4 sm:flex-row">
