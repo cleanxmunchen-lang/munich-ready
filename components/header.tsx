@@ -69,12 +69,12 @@ export function Header() {
 			{open && (
 				<div className="fixed inset-0 z-40 md:hidden">
 					<div className="absolute inset-0 bg-black/30" />
-					<div ref={panelRef} className="absolute right-4 top-16 w-[88%] max-w-xs rounded-xl bg-white border border-black/5 shadow-lg p-4">
-						<nav className="flex flex-col gap-3">
-							<a href="#kits" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">Ready Kits</a>
-							<a href="#build" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">Build Your Kit</a>
-							<a href="#how" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">How It Works</a>
-							<a href="#faq" onClick={() => setOpen(false)} className="text-sm font-semibold py-2">FAQ</a>
+					<div ref={panelRef} className="absolute right-4 top-16 w-[88%] max-w-xs rounded-xl bg-white border border-black/5 shadow-lg p-2">
+						<nav className="flex flex-col">
+							<a href="#kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Ready Kits</a>
+							<a href="#build" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">Build Your Kit</a>
+							<a href="#how" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">How It Works</a>
+							<a href="#faq" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">FAQ</a>
 						</nav>
 					</div>
 				</div>

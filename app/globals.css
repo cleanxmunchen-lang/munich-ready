@@ -48,15 +48,18 @@ button, input, textarea, select { font: inherit; }
 
   .hero { padding-top: 20px; padding-bottom: 0; }
   .hero > .grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  /* Center hero content on mobile */
+  .hero .min-w-0 { text-align: center; }
+  .hero h1, .hero p, .hero-benefits, .hero-actions { text-align: center; }
   .hero h1 { margin-top: 8px; font-size: clamp(42px, 11vw, 64px); line-height: 1.05; }
   .hero h1 + p { margin-top: 12px; font-size: 16px; line-height: 1.4; }
   .hero h1 + p + p { margin-top: 6px; font-size: 16px; line-height: 1.5; }
-  .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 16px; gap: 8px; }
-  .hero-actions a { width: auto; min-width: 140px; max-width: 320px; }
-  /* Very small phones stack full-width */
-  @media (max-width: 389px) {
-    .hero-actions { flex-direction: column; gap: 8px; }
-    .hero-actions a { width: 100%; }
+  .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 12px; gap: 10px; }
+  .hero-actions a { width: auto; min-width: 160px; max-width: 280px; padding: 10px 18px; height: 48px; }
+  /* Very small phones stack full-width but constrained */
+  @media (max-width: 375px) {
+    .hero-actions { flex-direction: column; gap: 12px; }
+    .hero-actions a { width: min(92%, 260px); margin: 0 auto; }
   }
   .hero-benefits { margin-top: 12px; gap: 6px; }
   .hero-benefits > div { gap: 6px; padding: 6px 8px; font-size: 11px; }
