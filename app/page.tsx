@@ -1,10 +1,9 @@
-import Link from 'next/link';
 import { Header } from '@/components/header';
+import { Hero } from '@/components/hero';
 import { Kits } from '@/components/kits';
 import { Builder } from '@/components/builder';
 import { Footer } from '@/components/footer';
 import { ReferralCapture } from '@/components/referral-capture';
-import { ProductImage } from '@/components/product-image';
 
 const faqs = [
 	['Can you deliver directly to my hotel?', 'Yes. Orders can be delivered to participating hotel receptions or the agreed delivery location.'],
@@ -23,36 +22,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ r
 			<main>
 				<ReferralCapture ref={ref} />
 
-				<section className="shell py-12 sm:py-20">
-					<div className="grid gap-6 sm:grid-cols-2 items-center">
-						<div>
-							<p className="eyebrow">MUNICH HOTEL DELIVERY</p>
-							<h1 className="mt-3 max-w-xl text-4xl font-bold tracking-[-.02em] sm:text-5xl">Everything you need for your festival day.</h1>
-							<p className="mt-4 max-w-lg text-base leading-7 text-black/65">Travel and festival essentials delivered directly to your hotel in Munich.</p>
-							<p className="mt-2 text-sm text-black/60">Small bags • Power banks • Rain protection • Blister care</p>
-							<div className="mt-6 flex flex-col gap-3 sm:flex-row">
-								<Link className="button-primary" href="#kits">Shop Ready Kits</Link>
-								<Link className="button-secondary" href="#build">Build Your Own Kit</Link>
-							</div>
-							<div className="mt-6 flex gap-3 text-sm">
-								<div className="rounded-xl bg-white px-3 py-2">Hotel delivery</div>
-								<div className="rounded-xl bg-white px-3 py-2">Secure online payment</div>
-								<div className="rounded-xl bg-white px-3 py-2">No account required</div>
-							</div>
-						</div>
-						<div className="hidden sm:block">
-							<div className="grid gap-3">
-								<div className="flex gap-3">
-									<ProductImage src="/kits/power-kit.jpg" name="Power Kit" className="h-40 w-40" />
-									<ProductImage src="/kits/essential-kit.jpg" name="Essential Kit" className="h-40 w-40" />
-								</div>
-								<div className="w-full">
-									<ProductImage src="/kits/full-day-kit.jpg" name="Full Day Kit" className="h-44 w-full" />
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
+				<Hero />
 
 				<Kits />
 				<Builder />

@@ -31,7 +31,8 @@ export function Kits() {
 					return (
 						<article
 							key={kit.id}
-							className={`flex flex-col rounded-2xl border-2 bg-gray-50 overflow-hidden p-4 ${isSelected ? 'border-[#184f3a]' : 'border-gray-100'}`}>
+							id={kit.id}
+							className={`flex scroll-mt-24 flex-col rounded-2xl border-2 bg-gray-50 overflow-hidden p-4 ${isSelected ? 'border-[#184f3a]' : 'border-gray-100'}`}>
 							<div className="w-full flex flex-1 flex-col">
 								<ProductImage
 									src={`/products/${kit.id}.png`}
