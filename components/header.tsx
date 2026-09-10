@@ -10,6 +10,8 @@ export function Header() {
 	const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 	const [open, setOpen] = useState(false);
 	const panelRef = useRef<HTMLDivElement | null>(null);
+	const buttonRef = useRef<HTMLButtonElement | null>(null);
+	const menuId = 'mobile-menu';
 
 	useEffect(() => {
 		function onKey(e: KeyboardEvent) {
@@ -22,15 +24,16 @@ export function Header() {
 	useEffect(() => {
 		function onClick(e: MouseEvent) {
 			if (!open) return;
+			if (buttonRef.current && buttonRef.current.contains(e.target as Node)) return;
 			if (panelRef.current && !panelRef.current.contains(e.target as Node)) setOpen(false);
 		}
 		document.addEventListener('mousedown', onClick);
 		return () => document.removeEventListener('mousedown', onClick);
 	}, [open]);
 
-    const { t, lang, setLang } = useI18n();
+	const { t, lang, setLang } = useI18n();
 
-    return (
+	return (
 		<header className="site-header sticky top-0 z-30 bg-[var(--sand)]/95 backdrop-blur-sm">
 			<div className="shell flex h-16 items-center justify-between">
 				<div className="flex items-center gap-4">
@@ -41,11 +44,9 @@ export function Header() {
 						<Link href="#how-it-works">{t('nav.howItWorks')}</Link>
 						<Link href="#faq">{t('nav.faq')}</Link>
 					</nav>
-
 				</div>
 
 				<div className="flex shrink-0 items-center gap-1 min-[360px]:gap-2 min-[769px]:gap-4 whitespace-nowrap">
-					{/* Compact mobile language toggle */}
 					<button
 						onClick={() => setLang(lang === 'en' ? 'de' : 'en')}
 						aria-label={lang === 'en' ? 'Switch to German' : 'Zu Englisch wechseln'}
@@ -54,19 +55,25 @@ export function Header() {
 						{t(`langLabels.${lang}`)}
 					</button>
 
-					{/* Mobile menu button (visible on mobile only) */}
 					<button
-						aria-label="Open menu"
+						ref={buttonRef}
+						aria-label={open ? 'Close menu' : 'Open menu'}
 						aria-expanded={open}
+						aria-controls={menuId}
 						onClick={() => setOpen((s) => !s)}
 						className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white p-2 shadow-sm md:hidden"
 					>
-						<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="#17201a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-							<path d="M3 12h18M3 6h18M3 18h18" />
-						</svg>
+						{open ? (
+							<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="#17201a" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
+								<path d="M6 6L18 18M18 6L6 18" />
+							</svg>
+						) : (
+							<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="#17201a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+								<path d="M3 12h18M3 6h18M3 18h18" />
+							</svg>
+						)}
 					</button>
 
-					{/* Desktop language switcher */}
 					<div className="hidden self-stretch items-stretch gap-2 min-[769px]:flex">
 						<button onClick={() => setLang('en')} aria-label="Select English" className={`flex min-w-[52px] shrink-0 items-center justify-center rounded-full p-0 shadow-sm ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
 						<button onClick={() => setLang('de')} aria-label="Select German" className={`flex min-w-[52px] shrink-0 items-center justify-center rounded-full p-0 shadow-sm ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
@@ -85,18 +92,14 @@ export function Header() {
 				</div>
 			</div>
 
-			{/* Mobile nav panel */}
-				{open && (
-				<div className="fixed inset-0 z-40 md:hidden">
-					<div className="absolute inset-0 bg-black/30" />
-						<div ref={panelRef} className="absolute left-4 right-4 top-full mt-3 max-w-xs mx-auto rounded-xl bg-white border border-black/5 shadow-lg p-2">
-							<nav className="flex flex-col">
-								<a href="#ready-kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.readyKits')}</a>
-								<a href="#build-your-kit" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.buildKit')}</a>
-								<a href="#how-it-works" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.howItWorks')}</a>
-								<a href="#faq" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.faq')}</a>
-							</nav>
-						</div>
+			{open && (
+				<div id={menuId} ref={panelRef} className="relative z-50 border-t border-black/10 bg-[var(--sand)] shadow-sm md:hidden">
+					<nav className="shell flex flex-col py-3">
+						<Link href="#ready-kits" onClick={() => setOpen(false)} className="block w-full rounded-md px-3 py-3 text-left text-[#17201a] hover:bg-[#e7f0e7]">{t('nav.readyKits')}</Link>
+						<Link href="#build-your-kit" onClick={() => setOpen(false)} className="block w-full rounded-md px-3 py-3 text-left text-[#17201a] hover:bg-[#e7f0e7]">{t('nav.buildKit')}</Link>
+						<Link href="#how-it-works" onClick={() => setOpen(false)} className="block w-full rounded-md px-3 py-3 text-left text-[#17201a] hover:bg-[#e7f0e7]">{t('nav.howItWorks')}</Link>
+						<Link href="#faq" onClick={() => setOpen(false)} className="block w-full rounded-md px-3 py-3 text-left text-[#17201a] hover:bg-[#e7f0e7]">{t('nav.faq')}</Link>
+					</nav>
 				</div>
 			)}
 		</header>
