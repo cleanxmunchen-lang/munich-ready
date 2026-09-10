@@ -44,7 +44,16 @@ export function Header() {
 
 				</div>
 
-				<div className="flex items-center gap-2 md:gap-4 min-[769px]:gap-6 md:shrink-0 md:whitespace-nowrap">
+				<div className="flex shrink-0 items-center gap-1 min-[360px]:gap-2 min-[769px]:gap-4 whitespace-nowrap">
+					{/* Compact mobile language toggle */}
+					<button
+						onClick={() => setLang(lang === 'en' ? 'de' : 'en')}
+						aria-label={lang === 'en' ? 'Switch to German' : 'Zu Englisch wechseln'}
+						className="inline-flex h-11 min-w-12 shrink-0 items-center justify-center rounded-full bg-[#184f3a] p-0 text-white shadow-sm min-[769px]:hidden"
+					>
+						{t(`langLabels.${lang}`)}
+					</button>
+
 					{/* Mobile menu button (visible on mobile only) */}
 					<button
 						aria-label="Open menu"
@@ -58,9 +67,9 @@ export function Header() {
 					</button>
 
 					{/* Desktop language switcher */}
-					<div className="hidden sm:flex items-center gap-2 min-[769px]:gap-3">
-						<button onClick={() => setLang('en')} aria-label="Select English" className={`px-2 py-1 rounded min-[769px]:flex min-[769px]:h-14 min-[769px]:w-14 min-[769px]:shrink-0 min-[769px]:items-center min-[769px]:justify-center min-[769px]:rounded-full min-[769px]:p-0 min-[769px]:shadow-sm ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
-						<button onClick={() => setLang('de')} aria-label="Select German" className={`px-2 py-1 rounded min-[769px]:flex min-[769px]:h-14 min-[769px]:w-14 min-[769px]:shrink-0 min-[769px]:items-center min-[769px]:justify-center min-[769px]:rounded-full min-[769px]:p-0 min-[769px]:shadow-sm ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
+					<div className="hidden self-stretch items-stretch gap-2 min-[769px]:flex">
+						<button onClick={() => setLang('en')} aria-label="Select English" className={`flex min-w-[52px] shrink-0 items-center justify-center rounded-full p-0 shadow-sm ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
+						<button onClick={() => setLang('de')} aria-label="Select German" className={`flex min-w-[52px] shrink-0 items-center justify-center rounded-full p-0 shadow-sm ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
 					</div>
 
 					<button aria-label={t('cart.view').replace('{count}', String(itemCount)).replace('{unit}', t(itemCount === 1 ? 'build.item' : 'build.items'))} onClick={() => setCartOpen(true)} className="header-cart inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
@@ -82,11 +91,6 @@ export function Header() {
 					<div className="absolute inset-0 bg-black/30" />
 						<div ref={panelRef} className="absolute left-4 right-4 top-full mt-3 max-w-xs mx-auto rounded-xl bg-white border border-black/5 shadow-lg p-2">
 							<nav className="flex flex-col">
-								{/* Mobile language selector */}
-								<div className="flex gap-2 px-2 pb-2">
-									<button onClick={() => setLang('en')} className={`flex-1 py-2 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
-									<button onClick={() => setLang('de')} className={`flex-1 py-2 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
-								</div>
 								<a href="#ready-kits" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.readyKits')}</a>
 								<a href="#build-your-kit" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.buildKit')}</a>
 								<a href="#how-it-works" onClick={() => setOpen(false)} className="block w-full text-left text-[#17201a] py-3 px-3 rounded-md hover:bg-[#e7f0e7]">{t('nav.howItWorks')}</a>
