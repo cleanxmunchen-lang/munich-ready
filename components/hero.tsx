@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { ProductImage } from '@/components/product-image';
 import { formatPrice, kits, type KitId } from '@/data/catalog';
