@@ -61,13 +61,13 @@ export function Header() {
 						</svg>
 					</button>
 
-					<button aria-label={`View cart (${itemCount} ${itemCount === 1 ? 'item' : 'items'})`} onClick={() => setCartOpen(true)} className="header-cart inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
+					<button aria-label={t('cart.view').replace('{count}', String(itemCount)).replace('{unit}', t(itemCount === 1 ? 'build.item' : 'build.items'))} onClick={() => setCartOpen(true)} className="header-cart inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
 						<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
 							<path d="M3 3h2l.4 2M7 13h10l3-8H6.4" stroke="#17201a" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
 							<circle cx="10" cy="20" r="1" fill="#17201a" />
 							<circle cx="18" cy="20" r="1" fill="#17201a" />
 						</svg>
-						<span className="hidden sm:inline">Cart</span>
+						<span className="hidden sm:inline">{t('nav.cart')}</span>
 						{itemCount ? <span className="ml-2 font-bold">{itemCount} · {formatPrice(total)}</span> : null}
 						{itemCount > 0 && <span className="mobile-cart-badge hidden" aria-hidden="true">{itemCount}</span>}
 					</button>

@@ -6,6 +6,7 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { site } from '@/data/site';
 import en from '@/locales/en';
+import { OrderItemNames, type SavedOrderItem } from '@/components/order-item-names';
 
 export default async function Success({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
 	const sessionId = (await searchParams).session_id;
@@ -31,8 +32,6 @@ export default async function Success({ searchParams }: { searchParams: Promise<
 				<Footer />
 			</>
 		);
-
-	const itemNames = (order.items as { name: string; quantity: number }[]).map((item) => `${item.quantity} × ${item.name}`);
 
 	return (
 		<>
@@ -61,8 +60,7 @@ export default async function Success({ searchParams }: { searchParams: Promise<
 							<dd className="font-bold">{formatPrice(order.total)}</dd>
 						</div>
 						<div>
-							<dt className="mb-2">Items</dt>
-							<dd>{itemNames.join(', ')}</dd>
+							<OrderItemNames items={order.items as SavedOrderItem[]} />
 						</div>
 					</dl>
 

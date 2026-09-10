@@ -28,6 +28,7 @@ export function Kits() {
 			<div className="mt-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-stretch">
 				{(['essential-kit', 'power-kit', 'full-day-kit'] as const).map((kitId) => {
 					const kit = kits[kitId];
+					const kitName = t(`kits.names.${kit.id}`);
 					const isSelected = selectedKit?.id === kit.id;
 					const cableType = (isSelected ? selectedKit?.cableType : undefined) ?? cables[kit.id];
 					return (
@@ -38,15 +39,15 @@ export function Kits() {
 							<div className="w-full flex flex-1 flex-col">
 								<ProductImage
 									src={`/products/${kit.id}.png`}
-									name={kit.name}
+									name={kitName}
 									sizes="(max-width: 768px) 300px, (max-width: 1023px) 45vw, 320px"
 									className="kit-image aspect-square w-full shrink-0 bg-transparent md:mx-auto md:min-h-[330px] md:max-h-[420px] md:w-[95%]"
 								/>
 								{/* Content area */}
 								<div className="kit-content flex-1 flex flex-col justify-between pt-4">
 									<div>
-										<h3 className="text-xl font-semibold">{t(`kits.names.${kit.id}`)}</h3>
-										<p className="mt-1 text-sm text-black/65">{kit.description}</p>
+										<h3 className="text-xl font-semibold">{kitName}</h3>
+										<p className="mt-1 text-sm text-black/65">{t(`kits.descriptions.${kit.id}`)}</p>
 										{/* optional small line */}
 										{kit.id === 'essential-kit' ? (
 											<p className="kit-extra mt-2 text-sm text-black/55">{t('kits.extra.essential-kit')}</p>
@@ -83,11 +84,11 @@ export function Kits() {
 												if (isSelected) {
 													remove(items.findIndex((item) => item.kind === 'kit' && item.id === kit.id));
 													setAdded((previous) => ({ ...previous, [kit.id]: false }));
-													showToast(`${kit.name} removed from cart`);
+													showToast(t('cart.removedFromCart').replace('{name}', kitName));
 													return;
 												}
 												addKit(kit.id as KitId, cableType);
-												showToast(`${kit.name} added to cart`);
+												showToast(t('cart.addedToCart').replace('{name}', kitName));
 												if (!prefersReducedMotion) {
 													setAdded((s) => ({ ...s, [kit.id]: true }));
 													window.setTimeout(() => setAdded((s) => ({ ...s, [kit.id]: false })), 1400);

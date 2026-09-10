@@ -12,13 +12,15 @@ const benefitIcons = {
 };
 
 function KitPreview({ id, featured = false }: { id: KitId; featured?: boolean }) {
+  const { t } = useI18n();
   const kit = kits[id];
-  const badge = id === 'full-day-kit' ? 'BEST VALUE' : kit.popular ? 'MOST POPULAR' : null;
+  const kitName = t(`kits.names.${kit.id}`);
+  const badge = id === 'full-day-kit' ? t('kits.badges.bestValue') : kit.popular ? t('kits.badges.mostPopular') : null;
 
   return (
     <a
       href={`#${kit.id}`}
-      aria-label={`View ${kit.name}, ${formatPrice(kit.price)}`}
+      aria-label={t('kits.view').replace('{name}', kitName).replace('{price}', formatPrice(kit.price))}
       className={`hero-preview w-full block min-w-0 rounded-3xl border border-[#17201a]/10 bg-white p-2 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#184f3a] focus-visible:ring-offset-4 md:hover:-translate-y-1 md:hover:shadow-lg motion-reduce:transform-none motion-reduce:transition-none ${featured ? 'row-span-2 sm:p-4 shadow-md' : 'shadow-sm'}`}
     >
       {/* Mobile: compact horizontal card; Desktop (md+) falls back to stacked/layout handled by md: classes */}
@@ -29,7 +31,7 @@ function KitPreview({ id, featured = false }: { id: KitId; featured?: boolean })
           <div className="relative w-full h-full">
             <ProductImage
               src={`/products/${kit.id}.png`}
-              name={kit.name}
+              name={kitName}
               sizes={featured ? '(max-width: 768px) 44vw, (max-width: 1023px) 25vw, 300px' : '(max-width: 768px) 44vw, 128px'}
               priority={featured}
               className={`relative w-full h-full transform scale-125 md:scale-100 md:aspect-square md:h-auto p-0`}
@@ -40,7 +42,7 @@ function KitPreview({ id, featured = false }: { id: KitId; featured?: boolean })
         {/* Right: compact info footer */}
         <div className="flex-1 pl-3 pr-2 py-2 flex flex-col justify-between">
           <div className="flex items-start justify-between gap-2">
-            <p className="font-semibold text-base leading-tight">{kit.name}</p>
+            <p className="font-semibold text-base leading-tight">{kitName}</p>
             {badge ? (
               <span className="inline-block rounded-full bg-[#184f3a] px-2 py-0.5 text-[10px] font-bold leading-none tracking-wide text-white">{badge}</span>
             ) : (
@@ -97,7 +99,7 @@ export function Hero() {
           </div>
         </div>
         <div
-          aria-label="Preview ready-made kits"
+          aria-label={t('kits.preview')}
           className="hidden md:grid hero-showcase mx-auto w-full min-w-0 gap-3 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] md:items-center md:max-w-none lg:gap-4"
         >
           {/* Mobile: stack vertically full-width in desired order. Desktop keeps original two-column showcase layout. */}

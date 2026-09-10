@@ -7,7 +7,7 @@ import { useI18n } from '@/components/i18n-provider';
 
 export function CheckoutForm() {
 	const cart = useCart();
-	const { t } = useI18n();
+	const { t, lang } = useI18n();
 
 	type DeliveryId = 'hotel' | 'priority' | 'express';
 
@@ -46,6 +46,7 @@ export function CheckoutForm() {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					items: cart.items,
+					locale: lang,
 					deliveryType: cart.deliveryType,
 					refCode: cart.refCode,
 					customerName: form.get('customerName'),
@@ -93,18 +94,18 @@ export function CheckoutForm() {
 					</label>
 					{hotel ? (
 						<div className="rounded-xl bg-[#e7f0e7] p-4">
-							<strong>Delivery to: {hotel.name}</strong>
-							<p className="mt-1 text-sm">Partner hotel</p>
+							<strong>{t('checkout.deliveryTo').replace('{hotel}', hotel.name)}</strong>
+							<p className="mt-1 text-sm">{t('checkout.partnerHotel')}</p>
 							<input type="hidden" name="destination" value={hotel.name} />
 						</div>
 					) : (
 						<label className="text-sm font-semibold">
 							{t('checkout.destination')}
-							<input required name="destination" className="mt-1 w-full rounded-xl border border-black/15 p-3" placeholder="Hotel name and address" />
+							<input required name="destination" className="mt-1 w-full rounded-xl border border-black/15 p-3" placeholder={t('checkout.destinationPlaceholder')} />
 						</label>
 					)}
 					<label className="text-sm font-semibold">
-						Special instructions <span className="font-normal text-black/50">optional</span>
+						{t('checkout.specialInstructions')} <span className="font-normal text-black/50">optional</span>
 						<textarea name="specialInstructions" className="mt-1 min-h-20 w-full rounded-xl border border-black/15 p-3" />
 					</label>
 				</div>
@@ -122,19 +123,19 @@ export function CheckoutForm() {
 										<strong>
 											{deliveryLabel(option.id, option.name)} · {formatPrice(option.price)}
 										</strong>
-								<span className="ml-6 mt-1 block text-xs text-black/60">{option.description}</span>
+								<span className="ml-6 mt-1 block text-xs text-black/60">{t(`checkout.deliveryDescriptions.${option.id}`)}</span>
 						</label>
 					))}
 				</div>
 			</div>
 
 			<aside className="card h-fit p-5 sm:sticky sm:top-4">
-				<h2 className="text-xl font-bold">Your order</h2>
+				<h2 className="text-xl font-bold">{t('checkout.order')}</h2>
 				<div className="mt-4 space-y-3 text-sm">
 					{cart.items.map((item, index) => (
 						<div className="flex justify-between gap-3" key={`${item.id}-${index}`}>
 							<span>
-								{item.kind === 'kit' ? kits[item.id].name : products[item.id].name}
+								{t(`${item.kind === 'kit' ? 'kits' : 'products'}.names.${item.id}`)}
 								{item.kind === 'kit' && item.cableType ? ` · ${item.cableType === 'usb-c-cable' ? 'USB-C' : 'Lightning'}` : ''}
 							</span>
 							<strong>{formatPrice((item.kind === 'kit' ? kits[item.id].price : products[item.id].price) * item.quantity)}</strong>
@@ -144,15 +145,15 @@ export function CheckoutForm() {
 
 				<div className="mt-5 space-y-2 border-t border-black/10 pt-4 text-sm">
 					<p className="flex justify-between">
-						<span>Subtotal</span>
+						<span>{t('cart.subtotal')}</span>
 						<span>{formatPrice(cart.subtotal)}</span>
 					</p>
 					<p className="flex justify-between">
-						<span>Delivery</span>
+						<span>{t('cart.delivery')}</span>
 						<span>{formatPrice(cart.deliveryFee)}</span>
 					</p>
 					<p className="flex justify-between text-base font-bold">
-						<span>Total</span>
+						<span>{t('cart.total')}</span>
 						<span>{formatPrice(cart.total)}</span>
 					</p>
 				</div>
@@ -160,7 +161,7 @@ export function CheckoutForm() {
 				<button disabled={loading} className="button-primary mt-5 w-full disabled:opacity-50">
 					{loading ? t('checkout.continueToPayment') + '…' : `${t('checkout.continueToPayment')} · ${formatPrice(cart.total)}`}
 				</button>
-				<p className="mt-3 text-center text-xs text-black/50">Secure payment through Stripe</p>
+				<p className="mt-3 text-center text-xs text-black/50">{t('checkout.securePayment')}</p>
 			</aside>
 		</form>
 	);

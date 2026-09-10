@@ -27,6 +27,13 @@ const en = {
       'power-kit': 'Power Kit',
       'full-day-kit': 'Full Day Kit'
     },
+    descriptions: {
+      'essential-kit': 'The basics for a comfortable festival day.',
+      'power-kit': 'Stay charged and prepared all day.',
+      'full-day-kit': 'Everything you need from morning to evening.'
+    },
+    preview: 'Preview ready-made kits',
+    view: 'View {name}, {price}',
     extra: {
       'essential-kit': '5 essentials included',
       'full-day-kit': 'Everything for a full festival day'
@@ -41,6 +48,16 @@ const en = {
     lightning: 'Lightning'
   },
   products: {
+    descriptions: {
+      bag: 'Hands-free essentials, kept close.',
+      'power-bank': 'A pocket-sized charge for the day.',
+      'usb-c-cable': 'Reliable USB-C charging.',
+      'lightning-cable': 'Reliable Lightning charging.',
+      poncho: 'Lightweight cover when weather turns.',
+      plasters: 'A little comfort goes a long way.',
+      wipes: 'A quick freshen-up.',
+      tissues: 'Useful, compact, ready.'
+    },
     names: {
       bag: 'Small Crossbody Bag',
       'power-bank': 'Power Bank',
@@ -53,6 +70,9 @@ const en = {
     }
   },
   build: {
+    item: 'item',
+    items: 'items',
+    each: '{price} each',
     title: 'Build Your Own Kit',
     yourKit: 'Your Kit',
     noItems: 'No items yet',
@@ -63,6 +83,14 @@ const en = {
     continue: 'Continue to Checkout'
   },
   cart: {
+    empty: 'Your cart is empty.',
+    closeLabel: 'Close cart',
+    view: 'View cart ({count} {unit})',
+    addedToCart: '{name} added to cart',
+    removedFromCart: '{name} removed from cart',
+    addedQuantity: '{name} added to cart. Quantity: {count}',
+    decrease: 'Decrease quantity of {name}',
+    increase: 'Increase quantity of {name}',
     title: 'Your cart',
     close: 'Close',
     remove: 'Remove',
@@ -85,6 +113,16 @@ const en = {
     title: 'FAQ'
   },
   checkout: {
+    order: 'Your order',
+    deliveryTo: 'Delivery to: {hotel}',
+    partnerHotel: 'Partner hotel',
+    destinationPlaceholder: 'Hotel name and address',
+    securePayment: 'Secure payment through Stripe',
+    deliveryDescriptions: {
+      hotel: 'Delivered to your hotel reception or agreed location.',
+      priority: 'Priority preparation when available.',
+      express: 'Estimated 60–90 minutes depending on location and demand.'
+    },
     guestName: 'Guest name',
     roomNumber: 'Room number',
     phone: 'Phone / WhatsApp',
@@ -97,6 +135,7 @@ const en = {
     continueToPayment: 'Continue to payment'
   },
   success: {
+    items: 'Items',
     title: "You're ready!",
     paymentConfirmed: 'Payment confirmed',
     backHome: 'Return home'
