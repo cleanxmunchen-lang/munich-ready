@@ -41,14 +41,10 @@ export function Header() {
 						<Link href="#how-it-works">{t('nav.howItWorks')}</Link>
 						<Link href="#faq">{t('nav.faq')}</Link>
 					</nav>
-					{/* Desktop language switcher */}
-					<div className="hidden sm:flex items-center gap-2">
-						<button onClick={() => setLang('en')} aria-label="Select English" className={`px-2 py-1 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
-						<button onClick={() => setLang('de')} aria-label="Select German" className={`px-2 py-1 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
-					</div>
+
 				</div>
 
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 md:gap-4 md:shrink-0 md:whitespace-nowrap">
 					{/* Mobile menu button (visible on mobile only) */}
 					<button
 						aria-label="Open menu"
@@ -60,6 +56,12 @@ export function Header() {
 							<path d="M3 12h18M3 6h18M3 18h18" />
 						</svg>
 					</button>
+
+					{/* Desktop language switcher */}
+					<div className="hidden sm:flex items-center gap-2">
+						<button onClick={() => setLang('en')} aria-label="Select English" className={`px-2 py-1 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
+						<button onClick={() => setLang('de')} aria-label="Select German" className={`px-2 py-1 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
+					</div>
 
 					<button aria-label={t('cart.view').replace('{count}', String(itemCount)).replace('{unit}', t(itemCount === 1 ? 'build.item' : 'build.items'))} onClick={() => setCartOpen(true)} className="header-cart inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
 						<svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
