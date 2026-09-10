@@ -33,7 +33,11 @@ Copy the displayed webhook signing secret into `STRIPE_WEBHOOK_SECRET`. Configur
 
 Products, kits, delivery choices, and prices live in `data/catalog.ts`; amounts are integer euro cents. The server recalculates all prices from this source before creating Stripe line items. WhatsApp and contact placeholders live in `data/site.ts`. Commission logic is isolated in `lib/commission.ts`.
 
-Use `/admin/login`, then `/admin/orders` for fulfilment status and `/admin/hotels` for referral performance. The simple password guard is intentionally MVP-only; replace it with proper staff authentication before scaling.
+Use `/admin/login`, then `/admin/orders` for fulfilment status and `/admin/hotels` for referral performance. Login is public; the other pages and order updates require an admin session. Set a strong, unique `ADMIN_PASSWORD`. Missing or blank configuration denies access. Sessions are HMAC-signed, expire after eight hours, and use an HTTP-only cookie (Secure in production, SameSite=Strict); the cookie does not contain the password. Changing the password invalidates existing sessions. Logout clears the browser cookie. This is a single-owner MVP session, without individual staff accounts or server-side session revocation.
+
+The order table includes cable choice, special instructions, delivery service, referral code, commission, and subtotal/delivery/total. Status changes are confirmed after saving; cancellation affects fulfilment only and does not issue a refund. Hotel reporting remains read-only.
+
+Run admin regression checks with `node --test tests/admin.test.cjs`. These exercise session validation, protected-page guards, API handlers with mocked storage, and status-control success/failure states without contacting Stripe or Supabase.
 
 ## Deployment
 
