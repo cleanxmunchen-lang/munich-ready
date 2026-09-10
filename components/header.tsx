@@ -44,7 +44,7 @@ export function Header() {
 
 				</div>
 
-				<div className="flex items-center gap-2 md:gap-4 md:shrink-0 md:whitespace-nowrap">
+				<div className="flex items-center gap-2 md:gap-4 min-[769px]:gap-6 md:shrink-0 md:whitespace-nowrap">
 					{/* Mobile menu button (visible on mobile only) */}
 					<button
 						aria-label="Open menu"
@@ -58,9 +58,9 @@ export function Header() {
 					</button>
 
 					{/* Desktop language switcher */}
-					<div className="hidden sm:flex items-center gap-2">
-						<button onClick={() => setLang('en')} aria-label="Select English" className={`px-2 py-1 rounded ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
-						<button onClick={() => setLang('de')} aria-label="Select German" className={`px-2 py-1 rounded ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
+					<div className="hidden sm:flex items-center gap-2 min-[769px]:gap-3">
+						<button onClick={() => setLang('en')} aria-label="Select English" className={`px-2 py-1 rounded min-[769px]:flex min-[769px]:h-14 min-[769px]:w-14 min-[769px]:shrink-0 min-[769px]:items-center min-[769px]:justify-center min-[769px]:rounded-full min-[769px]:p-0 min-[769px]:shadow-sm ${lang === 'en' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.en')}</button>
+						<button onClick={() => setLang('de')} aria-label="Select German" className={`px-2 py-1 rounded min-[769px]:flex min-[769px]:h-14 min-[769px]:w-14 min-[769px]:shrink-0 min-[769px]:items-center min-[769px]:justify-center min-[769px]:rounded-full min-[769px]:p-0 min-[769px]:shadow-sm ${lang === 'de' ? 'bg-[#184f3a] text-white' : 'bg-white border border-black/10'}`}>{t('langLabels.de')}</button>
 					</div>
 
 					<button aria-label={t('cart.view').replace('{count}', String(itemCount)).replace('{unit}', t(itemCount === 1 ? 'build.item' : 'build.items'))} onClick={() => setCartOpen(true)} className="header-cart inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-sm font-semibold shadow-sm">
