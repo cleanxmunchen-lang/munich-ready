@@ -1,5 +1,6 @@
 "use client";
-import Link from 'next/link';
+import { CheckoutLink } from '@/components/checkout-link';
+import { KitCableSelector } from '@/components/kit-cable-selector';
 import { useEffect, useRef, useState } from 'react';
 import { formatPrice, kits, products } from '@/data/catalog';
 import { useCart } from '@/components/cart-provider';
@@ -56,7 +57,7 @@ export function CartDrawer() {
             <div key={`${item.id}-${index}`} className="cart-item flex items-center justify-between gap-3">
               <div className="flex-1">
                 <div className="font-semibold">{t(`${item.kind === 'kit' ? 'kits' : 'products'}.names.${item.id}`)}</div>
-                {item.kind === 'kit' && item.cableType ? <div className="text-xs text-black/60">{item.cableType === 'usb-c-cable' ? 'USB‑C' : 'Lightning'}</div> : null}
+                {item.kind === 'kit' && kits[item.id].cableChoice ? <KitCableSelector item={item} /> : null}
               </div>
               <div className="cart-item-controls flex items-center gap-3">
                 <div className="flex items-center gap-1 rounded-md border bg-white p-1">
@@ -80,7 +81,7 @@ export function CartDrawer() {
         </div>
 
         <div className="mt-4 grid gap-3">
-          <Link href="/checkout" className="button-primary w-full" onClick={() => setCartOpen(false)}>{t('cart.checkout')} · {formatPrice(total)}</Link>
+          <CheckoutLink className="button-primary w-full" onProceed={() => setCartOpen(false)}>{t('cart.checkout')} · {formatPrice(total)}</CheckoutLink>
           <button className="button-secondary w-full" onClick={() => setCartOpen(false)}>{t('cart.continueShopping')}</button>
         </div>
       </aside>

@@ -4,10 +4,13 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useCart } from '@/components/cart-provider';
 import { deliveryOptions, formatPrice, kits, products } from '@/data/catalog';
 import { useI18n } from '@/components/i18n-provider';
+import { KitCableSelector } from '@/components/kit-cable-selector';
+import { needsKitCable } from '@/lib/kit-cable';
 
 export function CheckoutForm() {
 	const cart = useCart();
 	const { t, lang } = useI18n();
+	const missingCable = cart.items.some(needsKitCable);
 
 	type DeliveryId = 'hotel' | 'priority' | 'express';
 
@@ -37,6 +40,7 @@ export function CheckoutForm() {
 
 	async function submit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
+		if (cart.items.some(needsKitCable)) return;
 		setError('');
 		setLoading(true);
 		const form = new FormData(event.currentTarget);
@@ -134,10 +138,10 @@ export function CheckoutForm() {
 				<div className="mt-4 space-y-3 text-sm">
 					{cart.items.map((item, index) => (
 						<div className="flex justify-between gap-3" key={`${item.id}-${index}`}>
-							<span>
+							<div className="min-w-0">
 								{t(`${item.kind === 'kit' ? 'kits' : 'products'}.names.${item.id}`)}
-								{item.kind === 'kit' && item.cableType ? ` · ${item.cableType === 'usb-c-cable' ? 'USB-C' : 'Lightning'}` : ''}
-							</span>
+								{item.kind === 'kit' && kits[item.id].cableChoice && <KitCableSelector item={item} disabled={loading} />}
+							</div>
 							<strong>{formatPrice((item.kind === 'kit' ? kits[item.id].price : products[item.id].price) * item.quantity)}</strong>
 						</div>
 					))}
@@ -158,7 +162,8 @@ export function CheckoutForm() {
 					</p>
 				</div>
 				{error && <p className="mt-4 text-sm text-red-700">{error}</p>}
-				<button disabled={loading} className="button-primary mt-5 w-full disabled:opacity-50">
+				{missingCable && <p id="checkout-cable-error" role="status" className="mt-4 text-sm text-red-700">{t('cart.cableRequired')}</p>}
+				<button disabled={loading || missingCable} aria-describedby={missingCable ? 'checkout-cable-error' : undefined} className="button-primary mt-5 w-full disabled:opacity-50">
 					{loading ? t('checkout.continueToPayment') + '…' : `${t('checkout.continueToPayment')} · ${formatPrice(cart.total)}`}
 				</button>
 				<p className="mt-3 text-center text-xs text-black/50">{t('checkout.securePayment')}</p>

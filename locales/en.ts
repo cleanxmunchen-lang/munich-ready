@@ -20,6 +20,8 @@ const en = {
     }
   },
   kits: {
+    cableLabel: 'Cable for {kit}',
+    cableRequired: 'Please choose USB-C or Lightning.',
     title: 'Ready-made kits',
     description: 'Choose a curated kit — delivered directly to your hotel.',
     names: {
@@ -83,6 +85,7 @@ const en = {
     continue: 'Continue to Checkout'
   },
   cart: {
+    cableRequired: 'Please choose USB-C or Lightning for your kit before checkout.',
     empty: 'Your cart is empty.',
     closeLabel: 'Close cart',
     view: 'View cart ({count} {unit})',

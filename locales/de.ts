@@ -20,6 +20,8 @@ const de = {
     }
   },
   kits: {
+    cableLabel: 'Kabel für {kit}',
+    cableRequired: 'Bitte wähle USB-C oder Lightning.',
     title: 'Fertige Kits',
     description: 'Wählen Sie ein kuratiertes Kit — direkt an Ihr Hotel geliefert.',
     names: {
@@ -61,6 +63,7 @@ const de = {
     continue: 'Weiter zur Kasse'
   },
   cart: {
+    cableRequired: 'Bitte wähle vor dem Bezahlen USB-C oder Lightning für dein Set.',
     empty: 'Dein Warenkorb ist leer.',
     closeLabel: 'Warenkorb schließen',
     view: 'Warenkorb ansehen ({count} {unit})',
@@ -151,6 +154,5 @@ const de = {
 };
 
 export default de;
-
 
 

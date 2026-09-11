@@ -1,5 +1,5 @@
 'use client';
-import Link from 'next/link';
+import { CheckoutLink } from '@/components/checkout-link';
 import { useState } from 'react';
 import { formatPrice, products, type ProductId } from '@/data/catalog';
 import { ProductImage } from '@/components/product-image';
@@ -90,7 +90,7 @@ export function Builder() {
 							</div>
 							<div className="mt-5 border-t border-black/10 pt-4">
 								<div className="flex justify-between"><span>{t('build.subtotal')}</span><strong>{formatPrice(subtotal)}</strong></div>
-								<Link href="/checkout" className="button-primary mt-4 w-full">{t('build.continue')}</Link>
+								<CheckoutLink className="button-primary mt-4 w-full">{t('build.continue')}</CheckoutLink>
 							</div>
 						</div>
 					</aside>

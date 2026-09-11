@@ -8,7 +8,7 @@ import { useI18n } from '@/components/i18n-provider';
 export function Kits() {
 	const { items, addKit, setKitCable, remove, showToast } = useCart();
 	const selectedKit = items.find((item) => item.kind === 'kit');
-	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({ 'essential-kit': 'usb-c-cable' });
+	const [cables, setCables] = useState<Record<string, 'usb-c-cable' | 'lightning-cable'>>({});
 	const [added, setAdded] = useState<Record<string, boolean>>({});
 
 	useEffect(() => {
@@ -30,7 +30,7 @@ export function Kits() {
 					const kit = kits[kitId];
 					const kitName = t(`kits.names.${kit.id}`);
 					const isSelected = selectedKit?.id === kit.id;
-					const cableType = (isSelected ? selectedKit?.cableType : undefined) ?? cables[kit.id];
+					const cableType = isSelected ? selectedKit.cableType : cables[kit.id];
 					return (
 						<article
 							key={kit.id}
