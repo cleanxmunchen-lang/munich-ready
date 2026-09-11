@@ -59,7 +59,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 				const state = JSON.parse(stored);
 				setItems(state.items ?? []);
 				setDeliveryType(state.deliveryType ?? 'hotel');
-				setRefCode(state.refCode ?? null);
+					// A referral captured from this URL takes precedence over the saved cart.
+					setRefCode((current) => current ?? state.refCode ?? null);
 			} catch {}
 		}
 		setReady(true);

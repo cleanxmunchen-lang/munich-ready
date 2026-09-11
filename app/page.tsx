@@ -38,13 +38,14 @@ const faqs = [
 	['How can I pay?', 'Online payment through Stripe is supported.']
 ];
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ ref?: string | string[] }> }) {
 	const { ref } = await searchParams;
+	const referralCode = Array.isArray(ref) ? ref[0] : ref;
 	return (
 		<>
 			<Header />
 			<main>
-				<ReferralCapture ref={ref} />
+				<ReferralCapture referralCode={referralCode} />
 
 				<Hero />
 

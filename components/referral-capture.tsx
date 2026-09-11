@@ -2,10 +2,12 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '@/components/cart-provider';
 
-export function ReferralCapture({ ref }: { ref?: string }) {
+export function ReferralCapture({ referralCode }: { referralCode?: string }) {
 	const { refCode, setRefCode } = useCart();
 	const [hotel, setHotel] = useState<{ name: string } | null>(null);
-	useEffect(() => { if (ref) setRefCode(ref); }, [ref, setRefCode]);
+	useEffect(() => {
+		if (referralCode && referralCode !== refCode) setRefCode(referralCode);
+	}, [referralCode, refCode, setRefCode]);
 	useEffect(() => { if (!refCode) return; fetch(`/api/hotels/${encodeURIComponent(refCode)}`).then((response) => response.ok ? response.json() : null).then(setHotel).catch(() => setHotel(null)); }, [refCode]);
 	if (!hotel) return null;
 	return (
