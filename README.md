@@ -11,7 +11,7 @@ Mobile-first Next.js MVP for practical travel and festival-day essentials delive
 
 ## Environment variables
 
-`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` identify the Supabase project. `SUPABASE_SERVICE_ROLE_KEY` is server-only and is used for protected order and hotel operations. `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-only Stripe credentials. `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is retained for future Stripe client additions. `NEXT_PUBLIC_SITE_URL` must be the full public URL. `ADMIN_PASSWORD` protects the MVP admin pages.
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` identify the Supabase project. `SUPABASE_SERVICE_ROLE_KEY` is server-only and is used for protected order and hotel operations. `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-only Stripe credentials. `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is retained for future Stripe client additions. `SITE_URL` is the server-side site origin: set it to `https://munichready.store` in production, or `http://localhost:3000` for local development. `ADMIN_PASSWORD` protects the MVP admin pages.
 
 Never expose `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, or `ADMIN_PASSWORD` in browser code or source control.
 
@@ -19,7 +19,7 @@ Never expose `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_S
 
 Run `supabase/migrations/001_initial_schema.sql`. The migration enables RLS and intentionally defines no public policies: browser users cannot read orders, customer data, Stripe IDs, or write order status. Server routes use the service role. A development partner hotel (`hotel01`) is seeded.
 
-Add hotel partners in the Supabase table with lower-case `ref_code` values. Their QR URL is `https://your-domain.com/?ref=REF_CODE`; the admin Hotels view generates a local QR preview. Referral codes are normalized and resolved only against the database; URL hotel names are never trusted.
+Add hotel partners in the Supabase table with lower-case `ref_code` values. Their QR URL is `https://munichready.store/?ref=REF_CODE`; the admin Hotels view generates a local QR preview. Referral codes are normalized and resolved only against the database; URL hotel names are never trusted.
 
 ## Stripe
 
@@ -27,7 +27,7 @@ Create a Stripe account and use test keys locally. In Stripe CLI, forward events
 
 `stripe listen --forward-to localhost:3000/api/stripe/webhook`
 
-Copy the displayed webhook signing secret into `STRIPE_WEBHOOK_SECRET`. Configure a production webhook for `https://your-domain.com/api/stripe/webhook` and subscribe to `checkout.session.completed` and `checkout.session.expired`. Test payment success, cancellation, and delayed webhook arrival. The success page queries the verified database status and does not rely on URL parameters alone.
+Copy the displayed webhook signing secret into `STRIPE_WEBHOOK_SECRET`. Configure a production webhook for `https://munichready.store/api/stripe/webhook` and subscribe to `checkout.session.completed` and `checkout.session.expired`. Test payment success, cancellation, and delayed webhook arrival. The success page queries the verified database status and does not rely on URL parameters alone.
 
 ## Catalog and operations
 
@@ -41,7 +41,7 @@ Run admin regression checks with `node --test tests/admin.test.cjs`. These exerc
 
 ## Deployment
 
-Deploy to Vercel, set every environment variable in the Vercel project, set `NEXT_PUBLIC_SITE_URL` to the deployed HTTPS URL, and configure the Stripe production webhook. Add real assets under `public/products/` when available; placeholder product art is shown until then.
+Deploy to Vercel, set every environment variable in the Vercel project, set `SITE_URL=https://munichready.store`, and configure the Stripe production webhook. Add real assets under `public/products/` when available; placeholder product art is shown until then.
 
 ## Before going live
 
