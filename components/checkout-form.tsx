@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useCart } from '@/components/cart-provider';
 import { deliveryOptions, formatPrice, kits, products } from '@/data/catalog';
 import { useI18n } from '@/components/i18n-provider';
@@ -29,6 +29,8 @@ export function CheckoutForm() {
 	const [hotel, setHotel] = useState<{ name: string; address?: string } | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const submitting = useRef(false);
+	const attempt = useRef<{ body: string; key: string } | null>(null);
 
 	useEffect(() => {
 		if (cart.refCode)
@@ -40,30 +42,37 @@ export function CheckoutForm() {
 
 	async function submit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		if (cart.items.some(needsKitCable)) return;
+		if (submitting.current || cart.items.some(needsKitCable)) return;
+		submitting.current = true;
 		setError('');
 		setLoading(true);
-		const form = new FormData(event.currentTarget);
 		try {
+			const form = new FormData(event.currentTarget);
+			const body = JSON.stringify({
+				items: cart.items,
+				locale: lang,
+				deliveryType: cart.deliveryType,
+				refCode: cart.refCode,
+				customerName: form.get('customerName'),
+				roomNumber: form.get('roomNumber'),
+				phone: form.get('phone'),
+				destination: form.get('destination'),
+				specialInstructions: form.get('specialInstructions'),
+			});
+			if (attempt.current?.body !== body) attempt.current = { body, key: crypto.randomUUID() };
 			const response = await fetch('/api/checkout', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					items: cart.items,
-					locale: lang,
-					deliveryType: cart.deliveryType,
-					refCode: cart.refCode,
-					customerName: form.get('customerName'),
-					roomNumber: form.get('roomNumber'),
-					phone: form.get('phone'),
-					destination: form.get('destination'),
-					specialInstructions: form.get('specialInstructions'),
-				}),
+				headers: { 'Content-Type': 'application/json', 'Idempotency-Key': attempt.current.key },
+				body,
 			});
 			const data = await response.json();
-			if (!response.ok) throw new Error(data.error ?? 'Unable to start checkout.');
+			if (!response.ok) {
+				if (data.restart) attempt.current = null;
+				throw new Error(data.error ?? 'Unable to start checkout.');
+			}
 			window.location.assign(data.url);
 		} catch (reason) {
+			submitting.current = false;
 			setError(reason instanceof Error ? reason.message : 'Unable to start checkout.');
 			setLoading(false);
 		}

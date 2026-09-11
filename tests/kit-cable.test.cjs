@@ -58,7 +58,7 @@ function ui(lang = 'en', items = [kit('power-kit')], overrides = {}) {
     ...overrides,
   }) };
 }
-const hookStubs = { ...React, useState: initial => [initial, () => {}], useEffect() {}, useId: () => 'cable-test' };
+const hookStubs = { ...React, useState: initial => [initial, () => {}], useEffect() {}, useRef: initial => ({ current: initial }), useId: () => 'cable-test' };
 
 test('every kit requires an explicit valid cable; individual products do not', () => {
   const { needsKitCable } = base.load('lib/kit-cable.ts');
@@ -159,10 +159,10 @@ test('checkout API rejects missing/invalid cables before storage or Stripe; vali
   const writes = [], sessions = [];
   const env = runtime({
     '@/lib/supabase': { supabaseAdmin: { from: () => ({
-      insert(value) { writes.push(value); return { select: () => ({ single: async () => ({ data: { id: 'test-order' }, error: null }) }) }; },
-      update: () => ({ eq: async () => ({ error: null }) }),
+      insert(value) { writes.push(value); return { select: () => ({ single: async () => ({ data: { ...value, created_at: new Date().toISOString() }, error: null }) }) }; },
+      update() { const query = { eq: () => query, is: () => query, select: () => query, maybeSingle: async () => ({ data: { id: 'test-order' }, error: null }) }; return query; },
     }) } },
-    '@/lib/stripe': { stripe: { checkout: { sessions: { create: async value => { sessions.push(value); return { id: 'test-session', url: 'https://example.invalid/checkout' }; } } } } },
+    '@/lib/stripe': { stripe: { checkout: { sessions: { create: async value => { sessions.push(value); return { id: 'test-session', status: 'open', url: 'https://example.invalid/checkout' }; } } } } },
     '@/lib/hotels': { getHotelByRef: async () => null, normalizeRef: () => null },
   });
   const { POST } = env.load('app/api/checkout/route.ts');
