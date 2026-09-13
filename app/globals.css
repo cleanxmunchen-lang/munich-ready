@@ -131,3 +131,138 @@ button, input, textarea, select { font: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* Customer-only blue palette experiment.
+   The existing customer header scopes this theme, including cart/toast siblings.
+   Admin routes do not render .site-header, so their original palette stays intact.
+   Remove this block to restore the green customer palette. Legacy utility aliases
+   below let checkout and all other component/logic files remain unchanged. */
+body:has(.site-header) {
+  --brand-primary: #236AF5;
+  --brand-primary-hover: #1D58CE;
+  --brand-primary-soft: #EEF4FF;
+  --text-primary: #2D2F3A;
+  --text-secondary: #666A73;
+  --background: #FFFFFF;
+  --background-secondary: #F7F8FA;
+  --border: #E5E7EB;
+  --ink: var(--text-primary);
+  --sand: var(--background);
+  --moss: var(--brand-primary);
+  background-color: var(--background);
+  color: var(--text-primary);
+}
+
+body:has(.site-header) :is(.site-header, footer, .button-secondary, .card, #ready-kits article) {
+  background-color: var(--background);
+}
+body:has(.site-header) :is(.button-primary, [class~="bg-[#184f3a]"]) {
+  background-color: var(--brand-primary);
+  color: var(--background);
+}
+body:has(.site-header) :is(.button-primary, [class~="bg-[#184f3a]"]):hover:not(:disabled) {
+  background-color: var(--brand-primary-hover);
+}
+body:has(.site-header) :is(.button-primary, .button-secondary):focus,
+body:has(.site-header) [class~="focus-visible:ring-[#184f3a]"]:focus-visible {
+  --tw-ring-color: var(--brand-primary);
+}
+body:has(.site-header) .button-secondary {
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+body:has(.site-header) .button-secondary:hover:not(:disabled) {
+  background-color: var(--brand-primary-soft);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+}
+
+/* Brand labels, icons, prices and selected card/control borders. */
+body:has(.site-header) :is(.eyebrow, [class~="text-[#184f3a]"], [class~="text-[#184f3a]/40"]) {
+  color: var(--brand-primary);
+}
+body:has(.site-header) [class~="border-[#184f3a]"] {
+  border-color: var(--brand-primary);
+}
+body:has(.site-header) :is([class~="bg-[#e7f0e7]"], [class~="bg-[#f1f6f2]"], [class~="bg-[#184f3a]/15"]) {
+  background-color: var(--brand-primary-soft);
+}
+body:has(.site-header) [class~="bg-[#f7faf6]"] {
+  background-color: var(--background-secondary);
+}
+body:has(.site-header) [class~="text-[#17201a]"] {
+  color: var(--text-primary);
+}
+body:has(.site-header) :is(
+  [class~="text-black/40"], [class~="text-black/50"], [class~="text-black/55"],
+  [class~="text-black/60"], [class~="text-black/65"], [class~="text-black/70"]
+) {
+  color: var(--text-secondary);
+}
+body:has(.site-header) :is(
+  .card, [class~="border-black/5"], [class~="border-black/10"], [class~="border-black/15"],
+  [class~="border-[#17201a]/10"], [class~="border-[#17201a]/15"],
+  [class~="border-gray-100"], [class~="border-[#184f3a]/25"],
+  .cart-item, .cart-item-controls > div:first-child, .product-quantity button
+) {
+  border-color: var(--border);
+}
+body:has(.site-header) [class~="divide-black/10"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border);
+}
+
+/* Existing SVG presentation colors, without changing the artwork or geometry. */
+body:has(.site-header) [stroke="#184f3a"],
+body:has(.site-header) .header-cart [stroke="#17201a"] {
+  stroke: var(--brand-primary);
+}
+body:has(.site-header) [fill="#184f3a"],
+body:has(.site-header) .header-cart [fill="#17201a"] {
+  fill: var(--brand-primary);
+}
+body:has(.site-header) .site-header button:not(.header-cart) [stroke="#17201a"] {
+  stroke: var(--text-primary);
+}
+
+/* Header navigation, cable choices, quantity controls, footer and FAQ states. */
+body:has(.site-header) :is(.site-header nav a, footer a):is(:hover, :focus-visible),
+body:has(.site-header) #faq summary:is(:hover, :focus-visible),
+body:has(.site-header) #faq details[open] > summary,
+body:has(.site-header) #faq summary::marker,
+body:has(.site-header) :is(.product-quantity button, .cart-item-controls > div:first-child button) {
+  color: var(--brand-primary);
+}
+body:has(.site-header) [class~="hover:bg-[#e7f0e7]"]:hover,
+body:has(.site-header) :is(.cable-options button, fieldset button)[aria-pressed="false"]:hover:not(:disabled),
+body:has(.site-header) :is(.product-quantity button, .cart-item-controls > div:first-child button):hover:not(:disabled),
+body:has(.site-header) #faq details[open] {
+  background-color: var(--brand-primary-soft);
+}
+body:has(.site-header) :is(.cable-options button, fieldset button)[aria-pressed="false"]:hover:not(:disabled) {
+  border-color: var(--brand-primary);
+}
+body:has(.site-header) :is(input, textarea, select) {
+  accent-color: var(--brand-primary);
+}
+body:has(.site-header) :is(input, textarea, select, button, a, summary):focus-visible {
+  outline-color: var(--brand-primary);
+}
+body:has(.site-header) :is(.cart-dialog, main) a:not(.button-primary):not(.button-secondary):not(.hero-preview) {
+  color: var(--brand-primary);
+}
+body:has(.site-header) [class~="bg-black/90"] {
+  background-color: var(--brand-primary);
+}
+
+/* Recolor the existing fallback art only; product image files stay untouched. */
+body:has(.site-header) [class~="from-[#dce9dc]"] {
+  --tw-gradient-from: var(--brand-primary-soft) var(--tw-gradient-from-position);
+  --tw-gradient-to: transparent var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+body:has(.site-header) [class~="via-[#f7f1e7]"] {
+  --tw-gradient-stops: var(--tw-gradient-from), var(--background) var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+body:has(.site-header) [class~="to-[#d8e6dd]"] {
+  --tw-gradient-to: var(--background-secondary) var(--tw-gradient-to-position);
+}
