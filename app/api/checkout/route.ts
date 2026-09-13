@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { NextResponse } from 'next/server';
+import Stripe from 'stripe';
 import { z } from 'zod';
 import { getSiteUrl } from '@/lib/site-url';
 import { calculateOrder, type CheckoutItem } from '@/lib/order';
@@ -85,7 +86,22 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError || error instanceof SyntaxError) {
       return NextResponse.json({ error: 'Please check your checkout details.' }, { status: 400 });
     }
-    console.error('[checkout]', error instanceof CheckoutError ? error.code : 'checkout_failed');
+    if (error instanceof Stripe.errors.StripeError) {
+      console.error('[checkout] stripe_error ' + JSON.stringify({
+        name: error.name ?? null,
+        type: error.type ?? null,
+        code: error.code ?? null,
+        message: error.message ?? null,
+        statusCode: error.statusCode ?? null,
+        requestId: error.requestId ?? null,
+        declineCode: error.decline_code ?? null,
+      }));
+    } else {
+      console.error('[checkout] unknown_error ' + JSON.stringify({
+        name: error instanceof Error ? error.name : null,
+        message: error instanceof Error ? error.message : String(error),
+      }));
+    }
     return NextResponse.json({ error: 'Unable to start checkout. Please try again.', restart: error instanceof CheckoutError && error.restart },
       { status: error instanceof CheckoutError ? error.status : 503 });
   }
