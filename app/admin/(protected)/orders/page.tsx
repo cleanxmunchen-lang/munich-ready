@@ -29,14 +29,14 @@ export default async function Orders() {
     <p className="eyebrow">Operations</p>
     <h1 className="mt-2 text-3xl font-bold">Orders</h1>
     <p className="mt-2 text-sm text-black/60">Latest 100 orders. Customer data is visible only to signed-in internal staff.</p>
-    <div className="mt-6 overflow-x-auto rounded-2xl border border-black/10 bg-white">
+    <div className="admin-orders mt-6 max-w-full overflow-x-auto rounded-2xl border bg-white shadow-sm" role="region" aria-label="Orders table" tabIndex={0}>
       <table className="min-w-[1000px] w-full text-left text-sm">
-        <thead className="border-b border-black/10 bg-[#f6f5ef]"><tr>
+        <thead className="admin-table-heading border-b"><tr>
           {['Order', 'Date', 'Customer', 'Destination', 'Items', 'Amounts', 'Payment', 'Fulfilment'].map((header) => <th className="p-3 font-bold" key={header}>{header}</th>)}
         </tr></thead>
         <tbody>
           {(orders ?? []).map((order) => <tr className="border-b border-black/5 align-top" key={order.id}>
-            <td className="p-3 font-bold">{order.order_number}</td>
+            <td className="admin-order-number p-3 font-bold">{order.order_number}</td>
             <td className="p-3">{new Date(order.created_at).toLocaleString('en-DE')}</td>
             <td className="p-3">{order.customer_name}<br /><span className="text-black/55">Room {order.room_number || '—'} · {order.phone}</span></td>
             <td className="p-3">
@@ -58,7 +58,7 @@ export default async function Orders() {
               <p className="text-xs text-black/60">Delivery: {formatPrice(order.delivery_fee)}</p>
               <p className="mt-1 font-bold">Total: {formatPrice(order.total)}</p>
             </td>
-            <td className="p-3">{order.payment_status}</td>
+            <td className="p-3"><span className="admin-payment-badge" data-payment-status={order.payment_status}>{order.payment_status}</span></td>
             <td className="p-3"><OrderStatus id={order.id} status={order.status} editable={order.payment_status === 'paid'} /></td>
           </tr>)}
           {!orders?.length && <tr><td className="p-5 text-black/60" colSpan={8}>

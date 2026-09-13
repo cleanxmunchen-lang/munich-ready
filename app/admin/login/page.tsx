@@ -26,8 +26,9 @@ export default function AdminLogin() {
     }
   }
 
-  return <main className="shell flex min-h-screen items-center justify-center">
+  return <main className="admin-login shell flex min-h-screen items-center justify-center">
     <form onSubmit={login} className="card w-full max-w-sm p-7">
+      <p className="admin-brand mb-5 font-black">MUNICH <span>READY</span></p>
       <p className="eyebrow">Internal only</p>
       <h1 className="mt-2 text-2xl font-bold">Admin sign in</h1>
       <label className="mt-6 block text-sm font-semibold">Password

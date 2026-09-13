@@ -266,3 +266,138 @@ body:has(.site-header) [class~="via-[#f7f1e7]"] {
 body:has(.site-header) [class~="to-[#d8e6dd]"] {
   --tw-gradient-to: var(--background-secondary) var(--tw-gradient-to-position);
 }
+
+/* Admin-only theme. Public page styles and all admin behavior remain separate. */
+body:has(.admin-shell, .admin-login) {
+  --brand-primary: #236AF5;
+  --brand-primary-hover: #1D58CE;
+  --brand-primary-soft: #EEF4FF;
+  --text-primary: #2D2F3A;
+  --text-secondary: #666A73;
+  --background: #FFFFFF;
+  --background-secondary: #F7F8FA;
+  --border: #E5E7EB;
+  --ink: var(--text-primary);
+  --sand: var(--background-secondary);
+  --moss: var(--brand-primary);
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+}
+body:has(.admin-shell, .admin-login) :is(.card, .admin-header, .admin-orders, input, select) {
+  background-color: var(--background);
+  border-color: var(--border);
+}
+body:has(.admin-shell, .admin-login) :is(.eyebrow, .admin-brand > span, .admin-order-number, .admin-referral-link) {
+  color: var(--brand-primary);
+}
+body:has(.admin-shell, .admin-login) .admin-brand > .admin-brand-label {
+  color: var(--text-primary);
+  font-size: 0.75em;
+  letter-spacing: 0.08em;
+}
+body:has(.admin-shell, .admin-login) :is([class~="text-black/55"], [class~="text-black/60"]) {
+  color: var(--text-secondary);
+}
+body:has(.admin-shell, .admin-login) :is([class~="border-black/5"], [class~="border-black/10"], [class~="border-black/15"]) {
+  border-color: var(--border);
+}
+.admin-header nav :is(a, button) {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 9999px;
+}
+.admin-header nav :is(a, button):hover,
+body:has(.admin-orders) .admin-header a[href="/admin/orders"]:not(.admin-brand),
+body:has(.admin-hotels-title) .admin-header a[href="/admin/hotels"] {
+  background-color: var(--brand-primary-soft);
+  color: var(--brand-primary);
+}
+body:has(.admin-shell, .admin-login) :is(a, button, input, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
+}
+body:has(.admin-shell, .admin-login) :is(input, select):focus {
+  border-color: var(--brand-primary);
+}
+body:has(.admin-shell, .admin-login) .button-primary {
+  background-color: var(--brand-primary);
+  color: var(--background);
+  --tw-ring-color: var(--brand-primary);
+}
+body:has(.admin-shell, .admin-login) .button-primary:hover:not(:disabled) {
+  background-color: var(--brand-primary-hover);
+}
+body:has(.admin-shell) .admin-referral-link:hover {
+  color: var(--brand-primary-hover);
+}
+.admin-shell {
+  min-width: 0;
+}
+.admin-table-heading {
+  background-color: var(--background-secondary);
+  border-color: var(--border);
+}
+.admin-orders :is(th, td) {
+  padding: 16px;
+}
+.admin-orders th {
+  color: var(--text-secondary);
+}
+.admin-orders tbody tr:last-child {
+  border-bottom-width: 0;
+}
+.admin-orders select {
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+.admin-orders select:disabled {
+  background-color: var(--background-secondary);
+  color: var(--text-secondary);
+}
+.admin-payment-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 4px 10px;
+  background-color: var(--background-secondary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.admin-payment-badge[data-payment-status="paid"] {
+  border-color: var(--brand-primary-soft);
+  background-color: var(--brand-primary-soft);
+  color: var(--brand-primary);
+}
+.admin-payment-badge:is([data-payment-status="pending"], [data-payment-status="expired"]) {
+  border-color: #FDE68A;
+  background-color: #FFFBEB;
+  color: #92400E;
+}
+.admin-payment-badge:is([data-payment-status="failed"], [data-payment-status="cancelled"]) {
+  border-color: #FECACA;
+  background-color: #FEF2F2;
+  color: #B91C1C;
+}
+.admin-hotel-card {
+  overflow-wrap: anywhere;
+}
+.admin-shell .admin-hotel-card h2 {
+  font-size: 18px;
+  line-height: 1.4;
+}
+.admin-hotel-card p {
+  line-height: 1.7;
+}
+@media (max-width: 768px) {
+  .admin-orders select { font-size: 16px; }
+}

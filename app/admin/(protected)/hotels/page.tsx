@@ -14,7 +14,7 @@ export default async function Hotels() {
     return (
       <>
         <p className="eyebrow">Partners</p>
-        <h1 className="mt-2 text-3xl font-bold">Hotels</h1>
+        <h1 className="admin-hotels-title mt-2 text-3xl font-bold">Hotels</h1>
         <p className="mt-6 text-black/60">Supabase client is not configured.</p>
       </>
     );
@@ -32,7 +32,7 @@ export default async function Hotels() {
       return (
         <>
           <p className="eyebrow">Partners</p>
-          <h1 className="mt-2 text-3xl font-bold">Hotels</h1>
+          <h1 className="admin-hotels-title mt-2 text-3xl font-bold">Hotels</h1>
           <p className="mt-6 text-black/60">Supabase query failed: {error.message}</p>
         </>
       );
@@ -45,7 +45,7 @@ export default async function Hotels() {
     return (
       <>
         <p className="eyebrow">Partners</p>
-        <h1 className="mt-2 text-3xl font-bold">Hotels</h1>
+        <h1 className="admin-hotels-title mt-2 text-3xl font-bold">Hotels</h1>
         <p className="mt-6 text-black/60">Supabase query failed: {err.message}</p>
       </>
     );
@@ -55,11 +55,11 @@ export default async function Hotels() {
     return (
       <>
         <p className="eyebrow">Partners</p>
-        <h1 className="mt-2 text-3xl font-bold">Hotels</h1>
+        <h1 className="admin-hotels-title mt-2 text-3xl font-bold">Hotels</h1>
         <p className="mt-6 text-black/60">No hotel partners yet.</p>
       </>
     );
   }
 
   const siteUrl = getSiteUrl();
-  return <><p className="eyebrow">Partners</p><h1 className="mt-2 text-3xl font-bold">Hotels</h1><div className="mt-6 grid gap-5 md:grid-cols-2">{await Promise.all((hotels ?? []).map(async (hotel: any) => { const paid = (hotel.orders ?? []).filter((order: any) => order.payment_status === 'paid'); const sales = paid.reduce((sum: number, order: any) => sum + order.subtotal, 0); const commission = paid.reduce((sum: number, order: any) => sum + (order.hotel_commission ?? 0), 0); const url = `${siteUrl}/?ref=${hotel.ref_code}`; const qr = await QRCode.toDataURL(url, { width: 180, margin: 1 }); return <article className="card p-5" key={hotel.id}><div className="flex gap-5"><img src={qr} width="120" height="120" alt={`QR code for ${hotel.name}`} /><div><h2 className="font-bold">{hotel.name}</h2><p className="mt-1 text-sm text-black/60">Ref: {hotel.ref_code} · {hotel.active ? 'Active' : 'Inactive'}</p><p className="mt-3 text-sm">Commission: {hotel.commission_percent}%<br/>Paid orders: {paid.length}<br/>Attributed sales: {formatPrice(sales)}<br/>Estimated owed: {formatPrice(commission)}</p></div></div><a className="mt-4 block break-all text-sm text-[#184f3a] underline" href={url}>{url}</a></article>; }))}</div></>; }
+  return <><p className="eyebrow">Partners</p><h1 className="admin-hotels-title mt-2 text-3xl font-bold">Hotels</h1><div className="mt-6 grid gap-5 md:grid-cols-2">{await Promise.all((hotels ?? []).map(async (hotel: any) => { const paid = (hotel.orders ?? []).filter((order: any) => order.payment_status === 'paid'); const sales = paid.reduce((sum: number, order: any) => sum + order.subtotal, 0); const commission = paid.reduce((sum: number, order: any) => sum + (order.hotel_commission ?? 0), 0); const url = `${siteUrl}/?ref=${hotel.ref_code}`; const qr = await QRCode.toDataURL(url, { width: 180, margin: 1 }); return <article className="admin-hotel-card card min-w-0 p-6" key={hotel.id}><div className="flex flex-col gap-5 sm:flex-row"><img className="h-[120px] w-[120px] shrink-0" src={qr} width="120" height="120" alt={`QR code for ${hotel.name}`} /><div className="min-w-0"><h2 className="font-bold">{hotel.name}</h2><p className="mt-1 text-sm text-black/60">Ref: {hotel.ref_code} · {hotel.active ? 'Active' : 'Inactive'}</p><p className="mt-3 text-sm">Commission: {hotel.commission_percent}%<br/>Paid orders: {paid.length}<br/>Attributed sales: {formatPrice(sales)}<br/>Estimated owed: {formatPrice(commission)}</p></div></div><a className="admin-referral-link mt-4 block break-all text-sm underline underline-offset-4" href={url}>{url}</a></article>; }))}</div></>; }
