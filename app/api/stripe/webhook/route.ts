@@ -3,6 +3,7 @@ import type Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { supabaseAdmin } from '@/lib/supabase';
 import { calculateHotelCommission } from '@/lib/commission';
+import { notifyPaidOrder } from '@/lib/telegram';
 
 class WebhookError extends Error {
   constructor(public code: string, public status = 500) { super(code); }
@@ -48,15 +49,18 @@ export async function POST(request: Request) {
       }
       if (order.payment_status !== 'pending') throw new WebhookError('payment_state_conflict', 409);
       let commission = 0;
+      let hotelName: string | null = null;
       if (order.hotel_id) {
-        const { data: hotel, error } = await db.from('hotels').select('commission_percent').eq('id', order.hotel_id).maybeSingle();
+        const { data: hotel, error } = await db.from('hotels').select('name,commission_percent').eq('id', order.hotel_id).maybeSingle();
         if (error || !hotel) throw new WebhookError('hotel_read_failed');
+        hotelName = hotel.name;
         commission = calculateHotelCommission(order.subtotal, hotel.commission_percent);
         if (!Number.isSafeInteger(commission) || commission < 0) throw new WebhookError('invalid_commission');
       }
       const { data, error } = await db.from('orders').update({
         payment_status: 'paid', status: 'paid', stripe_payment_intent_id: paymentIntent, hotel_commission: commission,
-      }).eq('id', orderId).eq('stripe_session_id', session.id).eq('payment_status', 'pending').select('id').maybeSingle();
+      }).eq('id', orderId).eq('stripe_session_id', session.id).eq('payment_status', 'pending')
+        .select('id,order_number,customer_name,phone,room_number,delivery_address,delivery_type,items,subtotal,delivery_fee,total,hotel_ref,hotel_commission,special_instructions').maybeSingle();
       if (error) throw new WebhookError('payment_update_failed');
       // A concurrent delivery may have won the conditional update. Confirm its result.
       if (!data) {
@@ -64,6 +68,9 @@ export async function POST(request: Request) {
         if (current.payment_status !== 'paid' || current.stripe_payment_intent_id !== paymentIntent) {
           throw new WebhookError('payment_update_conflict', 409);
         }
+      } else {
+        // Only the request that actually marked the order paid sends a message.
+        await notifyPaidOrder(data, hotelName);
       }
     } else if (order.payment_status === 'pending') {
       const { data, error } = await db.from('orders').update({ payment_status: 'expired' })

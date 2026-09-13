@@ -23,8 +23,9 @@ function runtime(overrides) {
   }
   return { load };
 }
-function setup() {
-  const orders = new Map(), hotels = new Map([['hotel', { id: 'hotel', commission_percent: 10 }]]);
+function setup(notify = async () => {}) {
+  const orders = new Map(), hotels = new Map([['hotel', { id: 'hotel', name: 'Test Hotel', commission_percent: 10 }]]);
+  const notifications = [];
   const failures = [], calls = [], sessions = new Map(), creates = [];
   const emptyUpdates = [];
   const db = { from(table) {
@@ -66,6 +67,11 @@ function setup() {
   };
   const env = runtime({
     '@/lib/supabase': { supabaseAdmin: db }, '@/lib/stripe': { stripe },
+    '@/lib/telegram': { notifyPaidOrder: async (order, hotelName) => {
+      assert.equal(orders.get(order.id).payment_status, 'paid');
+      notifications.push({ order: structuredClone(order), hotelName });
+      await notify(order, hotelName);
+    } },
     '@/lib/hotels': { getHotelByRef: async ref => ref === 'hotel01' ? { id: 'hotel', ref_code: ref, address: 'Hotel address' } : null, normalizeRef: ref => ref ?? '' },
   });
   const checkout = env.load('app/api/checkout/route.ts').POST;
@@ -77,7 +83,7 @@ function setup() {
       id: order.stripe_session_id, metadata: { orderId: order.id }, payment_status: 'paid', currency: 'eur', amount_total: order.total, payment_intent: 'pi_test', ...overrides,
     } } }) }));
   }
-  return { orders, hotels, failures, emptyUpdates, calls, sessions, creates, submit, event, env };
+  return { orders, hotels, failures, emptyUpdates, calls, sessions, creates, notifications, submit, event, env };
 }
 process.env.STRIPE_WEBHOOK_SECRET = 'local-test-placeholder';
 
@@ -123,6 +129,7 @@ test('webhook rejects unpaid, currency, amount, session and intent mismatches; s
   }
   assert.equal((await app.event(order, {}, undefined, 'invalid')).status, 400);
   order.currency = 'usd'; assert.equal((await app.event(order)).status, 422);
+  assert.equal(app.notifications.length, 0);
 });
 
 test('paid webhook is idempotent, concurrent deliveries are safe and commission excludes delivery', async () => {
@@ -139,6 +146,9 @@ test('paid webhook is idempotent, concurrent deliveries are safe and commission 
   assert.equal((await app.event(order, { payment_intent: 'pi_other' })).status, 409);
   assert.equal((await app.event(order, {}, 'checkout.session.expired')).status, 200);
   assert.equal(order.payment_status, 'paid');
+  assert.equal(app.notifications.length, 1);
+  assert.equal(app.notifications[0].hotelName, 'Test Hotel');
+  assert.equal(app.notifications[0].order.hotel_commission, Math.round(order.subtotal * .1));
 });
 
 test('every required webhook database failure returns retryable failure without marking paid', async () => {
@@ -147,7 +157,9 @@ test('every required webhook database failure returns retryable failure without 
     app.failures.push(failure);
     const response = await app.event(order); assert.equal(response.status, 500);
     assert(!((await response.text()).includes('SECRET'))); assert.equal(order.payment_status, 'pending');
-    assert.equal((await app.event(order)).status, 200); assert.equal(order.payment_status, 'paid');
+    assert.equal(app.notifications.length, 0);
+    assert.equal((await app.event(order)).status, 200);
+    assert.equal(app.notifications.length, 1); assert.equal(order.payment_status, 'paid');
   }
   const app = setup(), key = randomUUID(); await app.submit(key); const order = app.orders.get(key);
   app.hotels.clear(); assert.equal((await app.event(order)).status, 500);
@@ -163,6 +175,7 @@ test('expired webhook checks update failures and is idempotent', async () => {
   assert.equal((await app.event(order, {}, 'checkout.session.expired')).status, 200);
   assert.equal(order.payment_status, 'expired');
   assert.equal((await app.event(order, {}, 'checkout.session.expired')).status, 200);
+  assert.equal(app.notifications.length, 0);
 });
 
 test('checkout UI locks immediately on double click, retains retry key after failure and changes it with payload', async t => {
@@ -221,4 +234,96 @@ test('non-referral order has zero commission and old unlinked attempts cannot re
   const before = app.creates.length;
   assert.equal((await app.submit(oldKey)).status, 409);
   assert.equal(app.creates.length, before);
+});
+
+function telegramTest(t) {
+  const saved = { fetch: global.fetch, token: process.env.TELEGRAM_BOT_TOKEN, chat: process.env.TELEGRAM_CHAT_ID, error: console.error, warn: console.warn };
+  const calls = [], logs = [];
+  process.env.TELEGRAM_BOT_TOKEN = 'test-token-do-not-log';
+  process.env.TELEGRAM_CHAT_ID = 'test-chat';
+  console.error = (...args) => logs.push(args.join(' '));
+  console.warn = (...args) => logs.push(args.join(' '));
+  global.fetch = async (url, options) => { calls.push({ url, options }); return { ok: true, json: async () => ({ ok: true }) }; };
+  t.after(() => {
+    global.fetch = saved.fetch; console.error = saved.error; console.warn = saved.warn;
+    for (const [key, value] of [['TELEGRAM_BOT_TOKEN', saved.token], ['TELEGRAM_CHAT_ID', saved.chat]]) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  });
+  return { calls, logs, notify: runtime({ 'server-only': {} }).load('lib/telegram.ts').notifyPaidOrder };
+}
+
+test('Telegram sends one plain-text message with all paid order details and stored commission', async t => {
+  const telegram = telegramTest(t), app = setup(telegram.notify), key = randomUUID();
+  await app.submit(key, { roomNumber: '123', specialInstructions: '<Reception> & door code 1234', items: [
+    { kind: 'kit', id: 'power-kit', quantity: 1, cableType: 'lightning-cable' },
+    { kind: 'product', id: 'bag', quantity: 2 },
+  ] });
+  const order = app.orders.get(key);
+  assert.equal((await app.event(order)).status, 200);
+  assert.equal(telegram.calls.length, 1);
+  const { url, options } = telegram.calls[0];
+  assert.equal(url, 'https://api.telegram.org/bottest-token-do-not-log/sendMessage');
+  assert.equal(options.method, 'POST'); assert.equal(options.cache, 'no-store'); assert.equal(options.redirect, 'error');
+  assert(options.signal instanceof AbortSignal);
+  const body = JSON.parse(options.body);
+  assert.equal(body.chat_id, 'test-chat'); assert.equal(body.parse_mode, undefined);
+  assert.deepEqual(body.link_preview_options, { is_disabled: true });
+  for (const text of ['🟢 NEW PAID ORDER', `Order: ${order.order_number}`, 'Customer: Test Guest', 'Phone: 12345678', 'Room: 123',
+    'Hotel/Destination:\nTest Hotel', 'Delivery:\nHotel Delivery', '- Power Kit × 1 (Lightning)', '- Small Crossbody Bag × 2',
+    `Subtotal: €${(order.subtotal / 100).toFixed(2)}`, `Delivery: €${(order.delivery_fee / 100).toFixed(2)}`, `Total: €${(order.total / 100).toFixed(2)}`,
+    'Referral:\nhotel01', `Hotel commission:\n€${(order.hotel_commission / 100).toFixed(2)}`, 'Special instructions:\n<Reception> & door code 1234']) assert(body.text.includes(text), text);
+  assert.equal((await app.event(order)).status, 200);
+  assert.equal(telegram.calls.length, 1);
+});
+
+test('Telegram falls back to direct destination, displays USB-C and handles missing optional fields', async t => {
+  const telegram = telegramTest(t), app = setup(telegram.notify), key = randomUUID();
+  await app.submit(key, { refCode: null, items: [{ kind: 'kit', id: 'essential-kit', quantity: 1, cableType: 'usb-c-cable' }] });
+  assert.equal((await app.event(app.orders.get(key))).status, 200);
+  const { text } = JSON.parse(telegram.calls[0].options.body);
+  for (const value of ['Room: —', 'Hotel/Destination:\nHotel address', '(USB-C)', 'Referral:\nDirect', 'Hotel commission:\n€0.00', 'Special instructions:\n—']) assert(text.includes(value), value);
+});
+
+test('Telegram HTTP/API/JSON/network/timeout errors never fail a paid webhook or expose raw errors', async t => {
+  const telegram = telegramTest(t);
+  const outcomes = [
+    async () => ({ ok: false, status: 403 }),
+    async () => ({ ok: true, json: async () => ({ ok: false, description: 'test-token-do-not-log' }) }),
+    async () => ({ ok: true, json: async () => { throw Error('test-token-do-not-log'); } }),
+    async () => { throw Error('https://api.telegram.org/bottest-token-do-not-log/sendMessage'); },
+    async () => { throw new DOMException('test-token-do-not-log', 'TimeoutError'); },
+  ];
+  for (const outcome of outcomes) {
+    let count = 0;
+    global.fetch = async () => { count++; return outcome(); };
+    const app = setup(telegram.notify), key = randomUUID(); await app.submit(key);
+    const order = app.orders.get(key);
+    assert.equal((await app.event(order)).status, 200); assert.equal(order.payment_status, 'paid');
+    assert.equal((await app.event(order)).status, 200); assert.equal(count, 1);
+  }
+  assert.equal(telegram.logs.length, outcomes.length);
+  assert(telegram.logs.every(line => line.startsWith('[telegram]') && !line.includes('test-token-do-not-log')));
+});
+
+test('missing Telegram configuration skips sending without failing payment', async t => {
+  const telegram = telegramTest(t);
+  for (const missing of ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID']) {
+    const previous = process.env[missing]; delete process.env[missing];
+    const app = setup(telegram.notify), key = randomUUID(); await app.submit(key);
+    assert.equal((await app.event(app.orders.get(key))).status, 200);
+    assert.equal(app.orders.get(key).payment_status, 'paid');
+    process.env[missing] = previous;
+  }
+  assert.equal(telegram.calls.length, 0);
+  assert.deepEqual(telegram.logs, ['[telegram] not_configured', '[telegram] not_configured']);
+});
+
+test('unusually long legacy order messages stay within Telegram limit with a visible truncation notice', async t => {
+  const telegram = telegramTest(t), app = setup(telegram.notify), key = randomUUID();
+  await app.submit(key); const order = app.orders.get(key);
+  order.special_instructions = 'x'.repeat(5000);
+  assert.equal((await app.event(order)).status, 200);
+  const { text } = JSON.parse(telegram.calls[0].options.body);
+  assert(text.length <= 4096); assert(text.endsWith('[Truncated — see admin for full order.]'));
 });
