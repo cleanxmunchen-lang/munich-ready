@@ -401,3 +401,25 @@ body:has(.admin-shell) .admin-referral-link:hover {
 @media (max-width: 768px) {
   .admin-orders select { font-size: 16px; }
 }
+
+/* Hotel management controls, scoped to the existing admin theme. */
+.admin-hotel-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 8px 14px;
+  background: var(--background);
+  color: var(--brand-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+.admin-hotel-action:hover:not(:disabled) {
+  background: var(--brand-primary-soft);
+  border-color: var(--brand-primary);
+}
+.admin-shell .admin-hotel-editor h2 { font-size: 18px; line-height: 1.4; }
+.admin-hotel-editor input { accent-color: var(--brand-primary); }
+.admin-hotel-editor input[type="checkbox"] { min-height: 0; }
