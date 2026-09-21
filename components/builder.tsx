@@ -37,9 +37,9 @@ export function Builder() {
 									<div className="product-image h-36 w-full p-4">
 										<ProductImage src={product.image} name={productName} sizes="(max-width: 389px) calc((100vw - 44px) / 2), (max-width: 768px) calc((100vw - 52px) / 2), (max-width: 1023px) 30vw, 240px" className="h-full w-full" />
 									</div>
-									<div className="product-info p-3 flex flex-wrap items-center justify-between gap-2">
-											<div>
-											<div className="product-name text-sm font-bold" title={productName}>{productName}</div>
+									<div className="product-info mt-auto grid grid-cols-[minmax(0,1fr)_auto] items-end gap-2 p-3">
+											<div className="min-w-0">
+											<div className="product-name text-sm font-bold [overflow-wrap:anywhere]" title={productName}>{productName}</div>
 											<div className="mt-1 text-xs text-black/60">{formatPrice(product.price)}</div>
 										</div>
 										<div className="product-actions">
