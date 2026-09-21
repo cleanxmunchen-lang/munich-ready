@@ -1,6 +1,7 @@
 import QRCode from 'qrcode';
 import { requireAdmin } from '@/lib/admin-auth';
 import { supabaseAdmin } from '@/lib/supabase';
+import { logHotelDatabaseError } from '@/lib/admin-hotel-errors';
 import { formatPrice } from '@/data/catalog';
 import type { Hotel } from '@/lib/hotels';
 import { getHotelReferralUrl } from '@/lib/hotel-referral';
@@ -14,6 +15,7 @@ export default async function Hotels() {
   let hotels: HotelReport[] = [];
   let loadError = '';
   if (!supabaseAdmin) {
+    logHotelDatabaseError('hotels.select', { code: 'CONFIG_MISSING', message: 'Hotel storage requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.' });
     loadError = 'Supabase client is not configured.';
   } else {
     try {
@@ -22,8 +24,8 @@ export default async function Hotels() {
         .returns<HotelReport[]>();
       if (error) throw error;
       hotels = data ?? [];
-    } catch {
-      console.error('[admin-hotels] load_failed');
+    } catch (error) {
+      logHotelDatabaseError('hotels.select', error);
       loadError = 'Unable to load hotels. Please refresh and try again.';
     }
   }

@@ -196,3 +196,85 @@ test('referral actions download correct files and report clipboard success or fa
   await nodes(tree).find(node => node.type === 'button').props.onClick();
   assert(nodes(env.render(Actions, props)).some(node => String(node.props?.children).includes('Unable to copy automatically')));
 });
+
+test('Supabase diagnostics retain operation/code/message/details and redact configured secrets', t => {
+  const envNames = ['SUPABASE_SERVICE_ROLE_KEY', 'STRIPE_SECRET_KEY', 'TELEGRAM_BOT_TOKEN'];
+  const previous = envNames.map(name => process.env[name]); const originalLog = console.error;
+  t.after(() => {
+    console.error = originalLog;
+    envNames.forEach((name, i) => { if (previous[i] === undefined) delete process.env[name]; else process.env[name] = previous[i]; });
+  });
+  envNames.forEach((name, i) => { process.env[name] = `private-credential-${i}`; });
+  const logs = []; console.error = (...args) => logs.push(args);
+  const { logHotelDatabaseError } = runtime().load('lib/admin-hotel-errors.ts');
+  logHotelDatabaseError('hotels.insert', {
+    code: '42703', message: 'column "address" does not exist',
+    details: 'private-credential-0 private-credential-1 private-credential-2 Bearer auth-value https://user:pass@host.invalid sb_secret_othersecret',
+    hint: 'Check the public.hotels schema.',
+  });
+  assert.equal(logs[0].length, 1);
+  const entry = JSON.parse(logs[0][0].slice('[admin-hotels] supabase_error '.length));
+  assert.equal(entry.operation, 'hotels.insert'); assert.equal(entry.code, '42703');
+  assert.equal(entry.message, 'column "address" does not exist'); assert.equal(entry.hint, 'Check the public.hotels schema.');
+  assert.equal(entry.configuration.serviceRoleKeyPresent, true);
+  for (const secret of ['private-credential-0', 'private-credential-1', 'private-credential-2', 'auth-value', 'user:pass', 'sb_secret_othersecret']) assert(!logs[0][0].includes(secret));
+});
+
+test('real Supabase SDK loads/creates/edits using the existing schema and logs actual read/write failures', async t => {
+  const { createClient } = require('@supabase/supabase-js');
+  const originalLog = console.error; const logs = [], requests = [];
+  console.error = line => logs.push(line);
+  t.after(() => { console.error = originalLog; });
+  let failure = null;
+  const row = { id: randomUUID(), ...details, created_at: new Date().toISOString() };
+  const database = createClient('https://test-project.supabase.co', 'test-service-key', {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { fetch: async (url, options) => {
+      const requestUrl = new URL(url); const headers = new Headers(options.headers);
+      requests.push({ url: requestUrl, method: options.method, headers, body: options.body ? JSON.parse(options.body) : null });
+      if (failure) return new Response(JSON.stringify(failure), { status: 400, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify(options.method === 'GET' ? [{ ...row, orders: [] }] : row), {
+        status: options.method === 'POST' ? 201 : 200, headers: { 'Content-Type': 'application/json' },
+      });
+    } },
+  });
+  const env = runtime({
+    '@/lib/admin-auth': { requireAdmin: async () => {}, getAdminAuthStatus: async () => 'authenticated' },
+    '@/lib/supabase': { supabaseAdmin: database },
+    'next/navigation': { useRouter: () => ({ refresh() {} }) },
+  });
+  const Page = env.load('app/admin/(protected)/hotels/page.tsx').default;
+  const POST = env.load('app/api/admin/hotels/route.ts').POST;
+  const PATCH = env.load('app/api/admin/hotels/[id]/route.ts').PATCH;
+  const request = () => new Request('https://munichready.store/api/admin/hotels', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(details) });
+  assert(renderToStaticMarkup(await Page()).includes('Partner Hotel'));
+  assert.equal((await POST(request())).status, 201);
+  assert.equal((await PATCH(request(), { params: Promise.resolve({ id: row.id }) })).status, 200);
+  assert.deepEqual(requests.map(entry => entry.method), ['GET', 'POST', 'PATCH']);
+  assert(requests.every(entry => entry.url.pathname === '/rest/v1/hotels' && entry.headers.get('apikey') === 'test-service-key'));
+  assert.equal(requests[0].url.searchParams.get('select'), 'id,name,address,ref_code,commission_percent,active,orders(subtotal,payment_status,hotel_commission)');
+  assert.deepEqual(requests[1].body, details);
+  assert.equal(requests[2].url.searchParams.get('id'), `eq.${row.id}`);
+  failure = { code: 'PGRST204', message: "Could not find the 'address' column of 'hotels' in the schema cache", details: null, hint: 'Check the schema cache.' };
+  const pageHtml = renderToStaticMarkup(await Page()); assert(pageHtml.includes('Unable to load hotels'));
+  const failed = await POST(request()); assert.equal(failed.status, 500);
+  assert(!(await failed.text()).includes('schema cache'));
+  const logEntries = logs.map(line => JSON.parse(line.slice('[admin-hotels] supabase_error '.length)));
+  assert.deepEqual(logEntries.map(entry => entry.operation), ['hotels.select', 'hotels.insert']);
+  assert(logEntries.every(entry => entry.code === failure.code && entry.message === failure.message && entry.hint === failure.hint));
+});
+
+test('server Supabase client uses SUPABASE_URL and service-role key, not public anon configuration', t => {
+  const names = ['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_ANON_KEY'];
+  const previous = names.map(name => process.env[name]);
+  t.after(() => names.forEach((name, i) => { if (previous[i] === undefined) delete process.env[name]; else process.env[name] = previous[i]; }));
+  process.env.SUPABASE_URL = 'https://server-project.supabase.co'; process.env.SUPABASE_SERVICE_ROLE_KEY = 'fake-service-key';
+  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://wrong-project.supabase.co'; process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'fake-anon-key';
+  const calls = []; const client = {};
+  const overrides = { '@supabase/supabase-js': { createClient: (...args) => { calls.push(args); return client; } } };
+  assert.equal(runtime(overrides).load('lib/supabase.ts').supabaseAdmin, client);
+  assert.deepEqual(calls[0], ['https://server-project.supabase.co', 'fake-service-key', { auth: { persistSession: false } }]);
+  delete process.env.SUPABASE_URL;
+  assert.equal(runtime(overrides).load('lib/supabase.ts').supabaseAdmin, null);
+  assert.equal(calls.length, 1);
+});

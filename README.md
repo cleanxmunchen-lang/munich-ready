@@ -11,7 +11,7 @@ Mobile-first Next.js MVP for practical travel and festival-day essentials delive
 
 ## Environment variables
 
-`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` identify the Supabase project. `SUPABASE_SERVICE_ROLE_KEY` is server-only and is used for protected order and hotel operations. `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-only Stripe credentials. `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is retained for future Stripe client additions. `SITE_URL` is the server-side site origin: set it to `https://munichready.store` in production, or `http://localhost:3000` for local development. `ADMIN_PASSWORD` protects the MVP admin pages.
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are required by the server-side Supabase admin client for protected order and hotel operations. Set both in Vercel for the same existing Supabase project. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` do not configure that client and are not substitutes for these server variables. `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` are server-only Stripe credentials. `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is retained for future Stripe client additions. `SITE_URL` is the server-side site origin: set it to `https://munichready.store` in production, or `http://localhost:3000` for local development. `ADMIN_PASSWORD` protects the MVP admin pages.
 
 Never expose `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, or `ADMIN_PASSWORD` in browser code or source control.
 
@@ -51,3 +51,21 @@ Deploy to Vercel, set every environment variable in the Vercel project, set `SIT
 - Create hotel records and test every hotel QR code on mobile.
 - Set a monitored WhatsApp/contact number and test the mobile checkout at 320px, 375px, and 430px widths.
 - Replace the MVP admin password mechanism with staff authentication when operationally appropriate.
+
+
+## Diagnosing admin hotel database errors
+
+The Hotels page and create/edit API log one `[admin-hotels] supabase_error` JSON line on failure. It includes the operation (`hotels.select`, `hotels.insert`, or `hotels.update`), original Supabase code/message/details/hint with credentials redacted, and configuration-presence flags. Responses keep internal diagnostics server-side.
+
+Check the **Production** Vercel environment for `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from the same project, then redeploy after any configuration change. The anon/publishable key does not replace the service-role key. A `CONFIG_MISSING` diagnostic means the client could not be configured; an HTTP 500 from the save path requires inspecting its logged database error instead.
+
+The repository schema already contains `public.hotels.id`, `name`, `ref_code`, `address`, `commission_percent`, `active`, and `created_at`. Hotel reporting also reads the existing orders relationship. If a log indicates a schema mismatch, inspect the actual database with this **read-only** query before deciding whether a migration is needed:
+
+```sql
+select column_name, data_type, is_nullable, column_default
+from information_schema.columns
+where table_schema = 'public' and table_name = 'hotels'
+order by ordinal_position;
+```
+
+Do not rerun the initial table-creation migration, reset tables, or disable RLS to troubleshoot an existing production database.
