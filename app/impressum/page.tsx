@@ -1,1 +1,27 @@
-import { LegalPage } from '@/components/legal-page'; export default function Page() { return <LegalPage title="Impressum"><h2>Provider information</h2><p>[BUSINESS NAME]<br/>[BUSINESS ADDRESS]<br/>[EMAIL]<br/>[PHONE]</p><h2>Registration and tax information</h2><p>[VAT / TAX INFORMATION IF APPLICABLE]<br/>[REGISTRATION INFORMATION IF APPLICABLE]</p><h2>Responsible for content</h2><p>[NAME AND ADDRESS]</p></LegalPage>; }
+import type { Metadata } from 'next';
+import { LegalDocument } from '@/components/legal-document';
+
+export const metadata: Metadata = {
+  title: 'Impressum | MUNICH READY',
+  description: 'Anbieterkennzeichnung und Kontaktinformationen von MUNICH READY, Samuel Shestel.',
+};
+
+export default function Impressum() {
+  return (
+    <LegalDocument title="Impressum">
+      <h2>Angaben gemäß § 5 DDG</h2>
+      <address>
+        Samuel Shestel<br />
+        MUNICH READY<br />
+        Bittlmairstraße 7<br />
+        85051 Ingolstadt<br />
+        Deutschland
+      </address>
+      <h2>Kontakt</h2>
+      <p>
+        Telefon: <a href="tel:+491791424701">+49 179 1424701</a><br />
+        E-Mail: <a href="mailto:cleanx.munchen@gmail.com">cleanx.munchen@gmail.com</a>
+      </p>
+    </LegalDocument>
+  );
+}
