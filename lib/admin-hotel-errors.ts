@@ -1,4 +1,5 @@
 type HotelOperation = 'hotels.select' | 'hotels.insert' | 'hotels.update';
+export const ADMIN_HOTELS_REVISION = 'hotels-v2';
 
 function redact(value: unknown): string | null {
   if (typeof value !== 'string' && typeof value !== 'number') return null;
@@ -10,6 +11,7 @@ function redact(value: unknown): string | null {
     .map(([, secret]) => secret!.trim()).sort((a, b) => b.length - a.length);
   for (const secret of secrets) text = text.split(secret).join('[REDACTED]');
   return text
+    .replace(/\b(?:authorization|set-cookie|cookies?)["']?\s*[:=]\s*[^\r\n]*/gi, '[REDACTED header]')
     .replace(/\b(?:Bearer|Basic)\s+[^\s,;"']+/gi, '[REDACTED authorization]')
     .replace(/\beyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, '[REDACTED JWT]')
     .replace(/\b(?:sb_secret_|sk_live_|sk_test_|whsec_)[A-Za-z0-9_-]+\b/g, '[REDACTED key]')
@@ -20,6 +22,8 @@ function redact(value: unknown): string | null {
 export function logHotelDatabaseError(operation: HotelOperation, error: unknown) {
   const fields = error && typeof error === 'object' ? error as Record<string, unknown> : {};
   console.error('[admin-hotels] supabase_error ' + JSON.stringify({
+    revision: ADMIN_HOTELS_REVISION,
+    deploymentCommit: /^[a-f0-9]{7,40}$/i.test(process.env.VERCEL_GIT_COMMIT_SHA ?? '') ? process.env.VERCEL_GIT_COMMIT_SHA : null,
     operation,
     table: 'public.hotels',
     code: redact(fields.code),

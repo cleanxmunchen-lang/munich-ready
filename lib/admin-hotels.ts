@@ -12,6 +12,27 @@ const hotelInput = z.object({
   active: z.boolean().default(true),
 }).strict();
 
+export async function listAdminHotels() {
+  const auth = await getAdminAuthStatus();
+  if (auth === 'unconfigured') return NextResponse.json({ error: 'Admin access is not configured.' }, { status: 503 });
+  if (auth !== 'authenticated') return NextResponse.json({ error: 'Please sign in again.' }, { status: 401 });
+  if (!supabaseAdmin) {
+    logHotelDatabaseError('hotels.select', { code: 'CONFIG_MISSING', message: 'Hotel storage requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.' });
+    return NextResponse.json({ error: 'Hotel storage is not configured.' }, { status: 503 });
+  }
+  try {
+    // List real hotel columns only. QR assets and reporting totals are derived,
+    // not database columns or dependencies of the hotel-list API.
+    const { data, error } = await supabaseAdmin.from('hotels')
+      .select('id,name,ref_code,address,commission_percent,active,created_at');
+    if (error) throw error;
+    return NextResponse.json({ hotels: data ?? [] });
+  } catch (error) {
+    logHotelDatabaseError('hotels.select', error);
+    return NextResponse.json({ error: 'Unable to load hotels. Please refresh and try again.' }, { status: 500 });
+  }
+}
+
 export async function saveAdminHotel(request: Request, id?: string) {
   const auth = await getAdminAuthStatus();
   if (auth === 'unconfigured') return NextResponse.json({ error: 'Admin access is not configured.' }, { status: 503 });
@@ -33,7 +54,13 @@ export async function saveAdminHotel(request: Request, id?: string) {
   if (!input.success) return NextResponse.json({ error: input.error.issues[0]?.message || 'Please check the hotel details.' }, { status: 400 });
 
   try {
-    const fields = { ...input.data, address: input.data.address || null };
+    const fields = {
+      name: input.data.name,
+      address: input.data.address || null,
+      ref_code: input.data.ref_code,
+      commission_percent: input.data.commission_percent,
+      active: input.data.active,
+    };
     const query = id === undefined
       ? supabaseAdmin.from('hotels').insert(fields)
       : supabaseAdmin.from('hotels').update(fields).eq('id', id);

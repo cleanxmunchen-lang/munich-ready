@@ -69,3 +69,5 @@ order by ordinal_position;
 ```
 
 Do not rerun the initial table-creation migration, reset tables, or disable RLS to troubleshoot an existing production database.
+
+The authenticated `GET /api/admin/hotels` endpoint lists only existing hotel columns; the server-rendered Hotels page separately includes order reporting. GET and POST responses from the updated API include `X-MunichReady-Hotels-Version: hotels-v2`. Detailed error logs include that revision and Vercel's commit SHA when available. If production still prints only `[admin-hotels] save_failed` or the response lacks this header, check that the latest commit was built and promoted to the production domain, and that you are viewing logs for a new request to that deployment. Do not change SQL or credentials based solely on a log from older code.
